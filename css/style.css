@@ -1,0 +1,1254 @@
+/* ==========================================================================
+   BUILTBYJIMI PORTFOLIO - MAIN STYLESHEET
+   Extracted from Figma Design File "portfolio"
+   ========================================================================== */
+
+:root {
+  --color-bg: #000000;
+  --color-text: #ffffff;
+  --color-accent-lime: #befda7;
+  --color-muted: #828282;
+  --color-card-bg: #111111;
+  --color-border: #1a1a1a;
+  --color-pill-bg: #1c1c1e;
+  --color-pill-border: rgba(255, 255, 255, 0.15);
+  
+  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-serif: 'DM Serif Display', 'DM Serif Text', Georgia, serif;
+  --font-serif-thin: 'Cormorant Garamond', 'Instrument Serif', 'DM Serif Display', serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --max-content-width: 1068px;
+  --page-max-width: 1228px;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge, Opera */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Hide scrollbar for Firefox & IE/Edge */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.4;
+  /* Hide scrollbar for Firefox & IE/Edge */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utility Containers */
+.content-container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.label-mono {
+  font-family: var(--font-primary);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.lime-accent {
+  color: var(--color-accent-lime) !important;
+}
+
+/* ==========================================================================
+   FLOATING BOTTOM NAV BAR
+   Figma: 306x42px pill, fixed bottom, dark background with subtle border
+   ========================================================================== */
+.floating-nav {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  height: 42px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.nav-brand {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.nav-brand:hover {
+  color: var(--color-accent-lime);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-item {
+  font-size: 14px;
+  font-weight: 400;
+  color: #a0a0a0;
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: #ffffff;
+}
+
+/* Skip / Back to top button (Top right / bottom right) */
+.skip-top-btn {
+  position: fixed;
+  bottom: 36px;
+  right: 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+}
+
+.skip-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.skip-top-btn:hover {
+  background: #333333;
+  color: var(--color-accent-lime);
+}
+
+/* ==========================================================================
+   HERO SECTION & SCROLLING VIDEO EFFECT
+   "on scroll the video container should be smaller from full screen to about 60 percent smaller"
+   Sticky scroll container: stays pinned in center while shrinking, then scrolls naturally.
+   ========================================================================== */
+.hero-section {
+  width: 100%;
+  height: 220vh; /* scroll distance for the scale-down pinning effect */
+  position: relative;
+  background: var(--color-bg);
+}
+
+.hero-sticky-container {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px; /* 16px padding on all directions */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.hero-video-wrapper {
+  width: calc(100vw - 32px);
+  height: calc(100vh - 32px);
+  background-color: #0d0d0d;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+  transform-origin: center center;
+  will-change: transform, border-radius;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-overlay-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.video-ctrl-btn {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.video-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.video-progress-bar {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
+  transition: width 0.1s linear;
+}
+
+/* ==========================================================================
+   SECTION: WHO
+   ========================================================================== */
+.section-who {
+  padding-top: 100px;
+  padding-bottom: 120px;
+}
+
+.who-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.who-statement {
+  font-family: var(--font-serif-thin);
+  font-size: 28px;
+  line-height: 1.5;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 780px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   SECTION: OUR SERVICES
+   ========================================================================== */
+.section-services {
+  padding-top: 60px;
+  padding-bottom: 120px;
+}
+
+.services-header {
+  margin-bottom: 48px;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.service-toggle {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  position: relative;
+}
+
+.service-toggle:focus-visible {
+  outline: 2px solid var(--color-accent-lime);
+  border-radius: 4px;
+}
+
+.service-title {
+  font-family: var(--font-primary);
+  font-size: clamp(38px, 5.5vw, 72px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  text-transform: uppercase;
+  transition: color 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.35, 1);
+  user-select: none;
+  display: inline-block;
+}
+
+/* Plus Icon next to title: (44px) with rounded circle outline matching screenshot */
+.service-plus-icon {
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-lime);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.35, 1);
+  width: 44px;
+  height: 44px;
+}
+
+.service-plus-icon svg {
+  width: 38px;
+  height: 38px;
+}
+
+/* Hover on unselected service:
+   1. Title slides slightly to the left (-20px)
+   2. Plus sign appears with a comfortable, distinct gap */
+.service-item:not(.active-highlight) .service-toggle:hover .service-title {
+  color: var(--color-accent-lime);
+  transform: translateX(-24px);
+}
+
+.service-item:not(.active-highlight) .service-toggle:hover .service-plus-icon {
+  opacity: 1;
+  transform: translateY(-50%) translateX(6px);
+}
+
+/* Active / Selected Service: Title in lime accent, centered without shift */
+.service-item.active-highlight .service-title {
+  color: var(--color-accent-lime);
+  transform: translateX(0);
+}
+
+.service-item.active-highlight .service-plus-icon {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Collapsible Subitems Container with Smooth, Slower Max-Height & Opacity */
+.service-subitems-wrap {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.75s cubic-bezier(0.25, 1, 0.35, 1), opacity 0.55s ease, margin 0.5s ease;
+}
+
+.service-item.active-highlight .service-subitems-wrap {
+  max-height: 850px;
+  opacity: 1;
+  margin-top: 14px;
+  margin-bottom: 24px;
+}
+
+.service-subitems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.subitem-link {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+  opacity: 0.85;
+  transition: opacity 0.2s, color 0.2s, transform 0.2s;
+}
+
+.subitem-link:hover {
+  opacity: 1;
+  color: var(--color-accent-lime);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   SECTION: FEATURED WORK
+   Exact 3-column asymmetric layout from Figma
+   Row 1: tall (01) | short (02) | tall (03)
+   Row 2: short (04) | tall (05) | short (06)
+   ========================================================================== */
+.section-work {
+  padding-top: 80px;
+  padding-bottom: 140px;
+}
+
+.work-header {
+  margin-bottom: 48px;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.work-card {
+  width: 100%;
+}
+
+.card-inner {
+  display: block;
+  width: 100%;
+}
+
+.card-image-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: #111111;
+  border-radius: 4px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-tall .card-image-wrap {
+  aspect-ratio: 342 / 410;
+}
+
+.card-short .card-image-wrap {
+  aspect-ratio: 342 / 265;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+}
+
+.work-card:hover .card-image-wrap img {
+  transform: scale(1.04);
+}
+
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+  gap: 4px;
+}
+
+.card-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-muted);
+  display: inline-block;
+}
+
+.card-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+}
+
+.card-title {
+  font-family: var(--font-primary);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.card-subtitle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.work-card:hover .card-title {
+  color: #ffffff;
+}
+
+.work-card:hover .card-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.work-card:hover .card-dot {
+  background-color: var(--color-accent-lime);
+}
+
+/* ==========================================================================
+   SECTION: OUR APPROACH
+   Figma: 100% pure white 1px border (#ffffff) and clean vertical separator
+   ========================================================================== */
+.section-approach {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: 1px solid #ffffff; /* 100% white 1px border */
+  border-bottom: 1px solid #ffffff; /* 100% white 1px border */
+  position: relative;
+}
+
+.approach-container {
+  display: flex;
+  position: relative;
+  min-height: 520px;
+}
+
+.approach-col-left {
+  width: 249px;
+  flex-shrink: 0;
+  padding: 80px 32px 80px 0;
+  border-right: 1px solid #ffffff; /* 100% white 1px vertical separator line */
+}
+
+.approach-col-right {
+  flex: 1;
+  padding: 80px 0 80px 64px;
+}
+
+.approach-statement {
+  font-family: var(--font-serif-thin);
+  font-size: 28px;
+  line-height: 1.5;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 740px;
+  margin-bottom: 40px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.pill-btn {
+  display: inline-block;
+  background-color: var(--color-pill-bg);
+  border: 1px solid var(--color-pill-border);
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 400;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.pill-btn:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   SECTION: WHY WE ARE HERE
+   100% white 1px borders, vertical separator line,
+   with green manifesto heading centered on screen overlapping the line
+   without touching the label WHY WE ARE HERE
+   ========================================================================== */
+.section-why {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom: 1px solid #ffffff; /* 100% white 1px border */
+  position: relative;
+  overflow: hidden;
+  min-height: 750px;
+}
+
+.why-container {
+  display: flex;
+  position: relative;
+  min-height: 750px;
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.why-col-left {
+  width: 249px;
+  flex-shrink: 0;
+  padding: 100px 32px 100px 0;
+  border-right: 1px solid #ffffff; /* 100% white 1px vertical separator line */
+  position: relative;
+  z-index: 2;
+}
+
+.why-col-right {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Green Text positioned with respect to container:
+   - Starts just to the left of the separator line (overlapping it by ~70px)
+   - Stays safely clear of the WHY WE ARE HERE label (left column width: 249px)
+   - Centered vertically and scaled to match screenshot line breaks */
+.manifesto-center-wrap {
+  position: absolute;
+  top: 50%;
+  left: 175px; /* Overlaps the 249px separator line without touching WHY WE ARE HERE */
+  right: 0;
+  transform: translateY(-50%);
+  max-width: 860px;
+  z-index: 5;
+  pointer-events: none;
+  text-align: left;
+}
+
+.manifesto-heading {
+  font-family: var(--font-primary);
+  font-size: clamp(38px, 5.2vw, 76px);
+  line-height: 1.05;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--color-accent-lime);
+  pointer-events: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   FOOTER SECTION
+   ========================================================================== */
+.site-footer {
+  background-color: #000000;
+  border-top: 1px solid var(--color-border);
+  padding: 100px 24px 60px;
+}
+
+.footer-container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.footer-headline-block {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.footer-heading-sub {
+  font-family: var(--font-primary);
+  font-size: clamp(16px, 2.5vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.footer-heading-main {
+  font-family: var(--font-primary);
+  font-size: clamp(22px, 3.8vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 16px;
+}
+
+.footer-matrix {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  padding-top: 40px;
+  padding-bottom: 60px;
+  border-top: 1px solid var(--color-border);
+  gap: 40px;
+}
+
+.matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.matrix-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.matrix-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.matrix-link {
+  font-size: 15px;
+  color: #ffffff;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.matrix-link:hover {
+  color: var(--color-accent-lime);
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.legal-links {
+  display: flex;
+  gap: 24px;
+}
+
+.legal-link:hover {
+  color: #ffffff;
+}
+
+.copyright-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (FIGMA MOBILE FRAME 7:1290 - 445px viewport)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .approach-statement {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --content-padding: 20px;
+  }
+
+  body {
+    padding: 0;
+  }
+
+  .content-container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* 1. FLOATING NAVIGATION PILL */
+  .floating-nav {
+    bottom: 24px;
+    width: 296px;
+    max-width: calc(100% - 40px);
+    height: 42px;
+    padding: 10px 16px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 100px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .nav-brand {
+    font-size: 13.5px;
+    font-family: Arial, sans-serif;
+  }
+
+  .nav-links {
+    gap: 8px;
+  }
+
+  .nav-item {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  /* 2. SKIP / TOP BUTTON */
+  .skip-top-btn {
+    top: 16px;
+    right: 16px;
+    bottom: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(26, 26, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* 3. HERO SECTION */
+  .hero-section {
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  .hero-sticky-container {
+    padding: 0;
+    min-height: calc(100vh - 32px);
+  }
+
+  .hero-video-wrapper {
+    border-radius: 12px;
+  }
+
+  .video-overlay-controls {
+    top: 16px;
+    bottom: auto;
+    padding: 0 16px;
+  }
+
+  .video-ctrl-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(26, 26, 26, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+  }
+
+  .video-progress-bar {
+    height: 2px;
+  }
+
+  /* 4. WHO SECTION */
+  .section-who {
+    padding-top: 40px;
+    padding-bottom: 0;
+    margin-bottom: 140px;
+  }
+
+  .who-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .col-label {
+    margin-bottom: 0;
+  }
+
+  .label-mono {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+  }
+
+  .who-statement {
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    max-width: 100%;
+  }
+
+  /* 5. OUR SERVICES SECTION (Figma Mobile: all services expanded with green titles) */
+  .section-services {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 140px;
+  }
+
+  .services-header {
+    margin-bottom: 40px;
+  }
+
+  .services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .service-item {
+    border-bottom: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .service-toggle {
+    padding: 0 0 16px 0;
+    cursor: default;
+    width: 100%;
+  }
+
+  .service-title {
+    font-size: 32px;
+    line-height: 1.1;
+    color: var(--color-accent-lime) !important;
+    transform: none !important;
+    letter-spacing: -0.01em;
+  }
+
+  .service-plus-icon {
+    display: none !important;
+  }
+
+  .service-subitems-wrap {
+    max-height: none !important;
+    opacity: 1 !important;
+    display: block !important;
+    transition: none !important;
+  }
+
+  .service-subitems {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .subitem-link {
+    font-family: var(--font-primary);
+    font-size: 16px;
+    line-height: 1.2;
+    color: #ffffff;
+    opacity: 0.92;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .subitem-link:hover {
+    color: var(--color-accent-lime);
+    padding-left: 0;
+  }
+
+  /* 6. FEATURED WORK SECTION */
+  .section-work {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 160px;
+  }
+
+  .work-header {
+    margin-bottom: 60px;
+  }
+
+  .work-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+
+  .work-card {
+    width: 100%;
+  }
+
+  /* Alternating aspect ratios in Figma mobile */
+  .card-tall .card-image-wrap {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+  }
+
+  .card-short .card-image-wrap {
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+  }
+
+  .card-meta {
+    margin-top: 24px;
+    gap: 12px;
+  }
+
+  .card-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #ffffff;
+  }
+
+  .card-num {
+    font-size: 12px;
+    color: #ffffff;
+  }
+
+  .card-title {
+    font-size: 18px;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    margin-top: 0;
+  }
+
+  /* 7. OUR APPROACH SECTION */
+  .section-approach {
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    margin-bottom: 0;
+  }
+
+  .approach-container {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    padding: 0 20px;
+  }
+
+  .approach-col-left {
+    width: 100%;
+    height: 140px;
+    padding: 95px 0 16px 0;
+    border-right: none;
+    border-bottom: 1px solid #ffffff; /* 100% pure white horizontal divider */
+  }
+
+  .approach-col-right {
+    padding: 40px 0 70px 0;
+    width: 100%;
+  }
+
+  .approach-statement {
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 300;
+    margin-bottom: 32px;
+    max-width: 100%;
+  }
+
+  .approach-action {
+    display: block;
+  }
+
+  .pill-btn {
+    padding: 10px 24px;
+    font-size: 16px;
+    border: 1px solid #ffffff;
+  }
+
+  /* 8. WHY WE ARE HERE SECTION */
+  .section-why {
+    min-height: auto;
+    border-bottom: 1px solid #ffffff;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .why-container {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    padding: 0 20px;
+  }
+
+  .why-col-left {
+    width: 100%;
+    height: 140px;
+    padding: 95px 0 16px 0;
+    border-right: none;
+    border-bottom: 1px solid #ffffff; /* 100% pure white horizontal divider */
+  }
+
+  .why-col-right {
+    display: none;
+  }
+
+  .manifesto-center-wrap {
+    position: static;
+    transform: none;
+    left: auto;
+    right: auto;
+    max-width: 100%;
+    padding: 48px 0 100px 0;
+    text-align: center;
+  }
+
+  .manifesto-heading {
+    font-size: clamp(32px, 8.5vw, 40px);
+    line-height: 1.05;
+    text-align: center;
+    color: var(--color-accent-lime);
+    margin: 0 auto;
+    max-width: 405px;
+  }
+
+  /* 9. FOOTER SECTION */
+  .site-footer {
+    padding: 80px 20px 60px;
+  }
+
+  .footer-headline-block {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+
+  .footer-heading-sub {
+    font-size: 20px;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .footer-heading-main {
+    font-size: 22px;
+    line-height: 1.25;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .footer-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-top: 36px;
+    padding-bottom: 48px;
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .matrix-label {
+    text-align: center;
+  }
+
+  .matrix-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .matrix-col {
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .matrix-title {
+    font-size: 12px;
+  }
+
+  .matrix-link {
+    font-size: 18px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding-top: 28px;
+  }
+
+  .legal-links {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .copyright-text {
+    text-align: center;
+    font-size: 12px;
+  }
+}

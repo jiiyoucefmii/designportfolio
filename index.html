@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>builtbyjimi — Design Studio for Brands Ready to Move</title>
+  <meta name="description" content="We are a design studio for brands ready to move, not just forward, but beyond. Branding, Digital Design, Branding to Product Transition, Tech-driven Experiences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=DM+Serif+Text:ital@0;1&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- FLOATING BOTTOM NAVIGATION BAR -->
+  <nav class="floating-nav" id="floatingNav">
+    <a href="index.html" class="nav-brand active">© builtbyjimi</a>
+    <div class="nav-links">
+      <a href="projects.html" class="nav-item">Work</a>
+      <a href="#contact" class="nav-item">Contact</a>
+    </div>
+  </nav>
+
+  <!-- SKIP / BACK TO TOP BUTTON -->
+  <a href="#top" class="skip-top-btn" id="skipTopBtn" title="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </a>
+
+  <!-- MAIN SCROLL CONTAINER -->
+  <main id="top">
+
+    <!-- HERO SECTION: Interactive Video with Scroll Zoom & Sticky Centering -->
+    <section class="hero-section" id="heroSection">
+      <div class="hero-sticky-container" id="heroStickyContainer">
+        <div class="hero-video-wrapper" id="heroVideoWrapper">
+        <video class="hero-video" id="heroVideo" autoplay loop muted playsinline poster="assets/images/9ef623eb1077950386f490c97a1ffee422c9f546.png">
+          <!-- Premium modern fluid background aesthetic -->
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-black-and-white-abstract-ink-smoke-flow-40541-large.mp4" type="video/mp4">
+        </video>
+
+        <!-- Video overlay controls -->
+        <div class="video-overlay-controls">
+          <button class="video-ctrl-btn" id="videoPlayPauseBtn" aria-label="Toggle Play Pause">
+            <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+              <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+            </svg>
+            <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+
+          <div class="video-progress-bar">
+            <div class="video-progress-fill" id="videoProgressFill"></div>
+          </div>
+
+          <button class="video-ctrl-btn" id="videoMuteBtn" aria-label="Toggle Sound">
+            <svg class="icon-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg class="icon-unmuted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- SECTION: WHO -->
+    <section class="section-who">
+      <div class="content-container who-grid">
+        <div class="col-label">
+          <span class="label-mono">WHO</span>
+        </div>
+        <div class="col-body">
+          <p class="who-statement">
+            We’re a design studio for brands ready to move, not just forward, but beyond.<br>
+            For those who stand out by staying true. Who lead, not follow.<br>
+            Who believe authenticity and delivering excellence to their community is the baseline, not the goal.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: OUR SERVICES -->
+    <section class="section-services" id="services">
+      <div class="content-container">
+        <div class="services-header">
+          <span class="label-mono">OUR SERVICES</span>
+        </div>
+        <div class="services-list" id="servicesAccordion">
+          <!-- 1. BRANDING -->
+          <div class="service-item" data-service="branding">
+            <button class="service-toggle" aria-expanded="false">
+              <h2 class="service-title">BRANDING</h2>
+              <span class="service-plus-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="13"></circle>
+                  <line x1="14" y1="8" x2="14" y2="20"></line>
+                  <line x1="8" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="service-subitems-wrap">
+              <div class="service-subitems">
+                <a href="projects.html" class="subitem-link">BRANDING</a>
+                <a href="projects.html" class="subitem-link">CREATIVE DIRECTION</a>
+                <a href="projects.html" class="subitem-link">BRAND ARCHITECTURE</a>
+                <a href="projects.html" class="subitem-link">BRAND DEVELOPMENT</a>
+                <a href="projects.html" class="subitem-link">BRAND IDENTITY</a>
+                <a href="projects.html" class="subitem-link">NAMING</a>
+                <a href="projects.html" class="subitem-link">LOGO DESIGN</a>
+                <a href="projects.html" class="subitem-link">ICONOGRAPHY</a>
+                <a href="projects.html" class="subitem-link">ILLUSTRATION</a>
+                <a href="projects.html" class="subitem-link">3D</a>
+                <a href="projects.html" class="subitem-link">TYPOGRAPHY</a>
+                <a href="projects.html" class="subitem-link">PACKAGING</a>
+                <a href="projects.html" class="subitem-link">WAYFINDING</a>
+                <a href="projects.html" class="subitem-link">BRAND IMPLEMENTATION</a>
+                <a href="projects.html" class="subitem-link">EDITORIAL DESIGN</a>
+                <a href="projects.html" class="subitem-link">BOOKS</a>
+                <a href="projects.html" class="subitem-link">PRINT</a>
+                <a href="projects.html" class="subitem-link">REBRANDING</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. DIGITAL DESIGN -->
+          <div class="service-item" data-service="digital-design">
+            <button class="service-toggle" aria-expanded="false">
+              <h2 class="service-title">DIGITAL DESIGN</h2>
+              <span class="service-plus-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="13"></circle>
+                  <line x1="14" y1="8" x2="14" y2="20"></line>
+                  <line x1="8" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="service-subitems-wrap">
+              <div class="service-subitems">
+                <a href="projects.html" class="subitem-link">USER INTERFACE (UI) DESIGN</a>
+                <a href="projects.html" class="subitem-link">USER EXPERIENCE (UX) DESIGN</a>
+                <a href="projects.html" class="subitem-link">DESIGN SYSTEMS</a>
+                <a href="projects.html" class="subitem-link">WEB DESIGN & DEVELOPMENT</a>
+                <a href="projects.html" class="subitem-link">MOBILE APPS</a>
+                <a href="projects.html" class="subitem-link">INTERACTION DESIGN</a>
+                <a href="projects.html" class="subitem-link">PROTOTYPING</a>
+                <a href="projects.html" class="subitem-link">CREATIVE CODING</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BRANDING TO PRODUCT TRANSITION (Default Active in Figma) -->
+          <div class="service-item active-highlight" data-service="branding-to-product">
+            <button class="service-toggle" aria-expanded="true">
+              <h2 class="service-title lime-accent">BRANDING TO PRODUCT TRANSITION</h2>
+              <span class="service-plus-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="13"></circle>
+                  <line x1="14" y1="8" x2="14" y2="20"></line>
+                  <line x1="8" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="service-subitems-wrap">
+              <div class="service-subitems">
+                <a href="projects.html" class="subitem-link">DESIGN SYSTEM</a>
+                <a href="projects.html" class="subitem-link">BRAND GUIDELINES</a>
+                <a href="projects.html" class="subitem-link">CROSS-PLATFORM LOGO IMPLEMENTATION</a>
+                <a href="projects.html" class="subitem-link">USER INTERFACE (UI) DESIGN</a>
+                <a href="projects.html" class="subitem-link">BRAND LANGUAGE SYSTEMS</a>
+                <a href="projects.html" class="subitem-link">IMAGERY & ICONOGRAPHY</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. TECH-DRIVEN EXPERIENCES -->
+          <div class="service-item" data-service="tech-driven">
+            <button class="service-toggle" aria-expanded="false">
+              <h2 class="service-title">TECH-DRIVEN EXPERIENCES</h2>
+              <span class="service-plus-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="13"></circle>
+                  <line x1="14" y1="8" x2="14" y2="20"></line>
+                  <line x1="8" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="service-subitems-wrap">
+              <div class="service-subitems">
+                <a href="projects.html" class="subitem-link">CREATIVE TECHNOLOGY</a>
+                <a href="projects.html" class="subitem-link">AI INTEGRATION & AGENTS</a>
+                <a href="projects.html" class="subitem-link">WEBGL & 3D INTERACTIVE</a>
+                <a href="projects.html" class="subitem-link">MICRO-INTERACTIONS & MOTION</a>
+                <a href="projects.html" class="subitem-link">DYNAMIC CMS ARCHITECTURE</a>
+                <a href="projects.html" class="subitem-link">DIGITAL INSTALLATIONS</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. BUSINESS DESIGN -->
+          <div class="service-item" data-service="business-design">
+            <button class="service-toggle" aria-expanded="false">
+              <h2 class="service-title">BUSINESS DESIGN</h2>
+              <span class="service-plus-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="13"></circle>
+                  <line x1="14" y1="8" x2="14" y2="20"></line>
+                  <line x1="8" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="service-subitems-wrap">
+              <div class="service-subitems">
+                <a href="projects.html" class="subitem-link">BRAND STRATEGY</a>
+                <a href="projects.html" class="subitem-link">VALUE PROPOSITION DESIGN</a>
+                <a href="projects.html" class="subitem-link">PRODUCT POSITIONING</a>
+                <a href="projects.html" class="subitem-link">GO-TO-MARKET ASSETS</a>
+                <a href="projects.html" class="subitem-link">MARKET DIFFERENTIATION</a>
+                <a href="projects.html" class="subitem-link">ORGANIZATIONAL ALIGNMENT</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: FEATURED WORK -->
+    <section class="section-work" id="work">
+      <div class="content-container">
+        <div class="work-header">
+          <span class="label-mono">FEATURED WORK</span>
+        </div>
+
+        <!-- 3-column asymmetric grid matching Figma exactly -->
+        <div class="work-grid">
+          <!-- Card 01: Critical Flytech -->
+          <article class="work-card card-tall">
+            <a href="project-detail.html?id=critical-flytech" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/7c530a6cb36be79740ce6633adb92e96b1915764.png" alt="Critical Flytech" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">01</span>
+                </div>
+                <h3 class="card-title">Critical Flytech</h3>
+                <p class="card-subtitle">Two legacies, one identity</p>
+              </div>
+            </a>
+          </article>
+
+          <!-- Card 02: Brilean -->
+          <article class="work-card card-short">
+            <a href="project-detail.html?id=brilean" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/9ef623eb1077950386f490c97a1ffee422c9f546.png" alt="Brilean" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">02</span>
+                </div>
+                <h3 class="card-title">Brilean</h3>
+                <p class="card-subtitle">Starting over to go further</p>
+              </div>
+            </a>
+          </article>
+
+          <!-- Card 03: Modern Tax -->
+          <article class="work-card card-tall">
+            <a href="project-detail.html?id=modern-tax" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/802f9598a425f8f3c63d8d8d5831312993c9bb23.png" alt="Modern Tax" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">03</span>
+                </div>
+                <h3 class="card-title">Modern Tax</h3>
+                <p class="card-subtitle">A happy tax firm</p>
+              </div>
+            </a>
+          </article>
+
+          <!-- Card 04: supermodular.ai -->
+          <article class="work-card card-short">
+            <a href="project-supermodular.html" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/c4fa26411b8cef3c0318fe3d5394dd090c1c69bc.png" alt="supermodular.ai" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">04</span>
+                </div>
+                <h3 class="card-title">supermodular.ai</h3>
+                <p class="card-subtitle">One organism, many forms</p>
+              </div>
+            </a>
+          </article>
+
+          <!-- Card 05: Sensei -->
+          <article class="work-card card-tall">
+            <a href="project-detail.html?id=sensei" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/28824157fcbf268441c3052fef8676fbd6b34752.png" alt="Sensei" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">05</span>
+                </div>
+                <h3 class="card-title">Sensei</h3>
+                <p class="card-subtitle">Retail that feels right and runs better</p>
+              </div>
+            </a>
+          </article>
+
+          <!-- Card 06: Quill & Orki -->
+          <article class="work-card card-short">
+            <a href="project-quill.html" class="card-inner">
+              <div class="card-image-wrap">
+                <img src="assets/images/c4774ba4c80c84aaed03aebc49c1998850e03eb5.png" alt="Quill & Orki" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <div class="card-meta-top">
+                  <span class="card-dot"></span>
+                  <span class="card-num">06</span>
+                </div>
+                <h3 class="card-title">Quill & Orki</h3>
+                <p class="card-subtitle">Same spine, different brand</p>
+              </div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: OUR APPROACH -->
+    <section class="section-approach">
+      <div class="content-container approach-container">
+        <div class="approach-col-left">
+          <span class="label-mono">OUR APPROACH</span>
+        </div>
+        <div class="approach-col-right">
+          <p class="approach-statement">
+            We start by listening deeply to your challenges, your ambitions, and everything in between. Then we create from research, behavior, data, and inspiration that strikes from anywhere: a song, a pattern, a memory. We work across design, strategy, and technology, not in silos, but in one integrated, evolving process. Our systems are built to stretch, shift, and stand the test of time. We do it by providing direction and sharing control. We know expertise lives on both sides.
+          </p>
+          <div class="approach-action">
+            <a href="projects.html" class="pill-btn">Show me</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: WHY WE ARE HERE -->
+    <section class="section-why">
+      <div class="content-container why-container">
+        <div class="why-col-left">
+          <span class="label-mono">WHY WE ARE HERE</span>
+        </div>
+        <div class="why-col-right">
+          <!-- background grid lines preserved -->
+        </div>
+        <!-- Centered Green Text overlapping the separator line -->
+        <div class="manifesto-center-wrap">
+          <h1 class="manifesto-heading">
+            For us, design isn’t decoration. It’s a transformation. It evolves what’s stuck, strengthens what matters, and makes space for something better.
+          </h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer class="site-footer" id="contact">
+      <div class="footer-container">
+        <!-- Big statement -->
+        <div class="footer-headline-block">
+          <h3 class="footer-heading-sub">WE ARE INDUSTRY & TIME-ZONE AGNOSTIC.</h3>
+          <h3 class="footer-heading-sub">BECAUSE DESIGN ISN’T LIMITED BY CONTEXT, ONLY BY IMAGINATION.</h3>
+          <h2 class="footer-heading-main lime-accent">LET’S MAKE SOMETHING THAT MATTERS.®</h2>
+        </div>
+
+        <!-- Contact Links Matrix -->
+        <div class="footer-matrix">
+          <div class="matrix-label">
+            <span class="label-mono">CONTACT US</span>
+          </div>
+          <div class="matrix-grid">
+            <div class="matrix-col">
+              <span class="matrix-title">EMAIL</span>
+              <a href="mailto:hello@builtbyjimi.com" class="matrix-link">hello@builtbyjimi.com</a>
+            </div>
+            <div class="matrix-col">
+              <span class="matrix-title">INSTAGRAM</span>
+              <a href="https://instagram.com/builtbyjimi" target="_blank" rel="noopener" class="matrix-link">@builtbyjimi</a>
+            </div>
+            <div class="matrix-col">
+              <span class="matrix-title">LINKEDIN</span>
+              <a href="https://linkedin.com/in/builtbyjimi" target="_blank" rel="noopener" class="matrix-link">/builtbyjimi</a>
+            </div>
+            <div class="matrix-col">
+              <span class="matrix-title">BEHANCE</span>
+              <a href="https://behance.net/builtbyjimi" target="_blank" rel="noopener" class="matrix-link">/builtbyjimi</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Legal / Copyright -->
+        <div class="footer-bottom">
+          <div class="legal-links">
+            <a href="#" class="legal-link">PRIVACY POLICY</a>
+            <a href="#" class="legal-link">TERMS & CONDITIONS</a>
+          </div>
+          <p class="copyright-text">© 2026 ALL RIGHTS RESERVED.</p>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Lenis Smooth Scroll CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <!-- GSAP & ScrollTrigger CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <!-- Main Application Logic -->
+  <script src="js/main.js"></script>
+</body>
+</html>

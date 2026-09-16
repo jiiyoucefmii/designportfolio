@@ -1,0 +1,14 @@
+# Dependencies & Cache
+__pycache__/
+*.pyc
+.agents/
+scripts/
+
+# Figma raw data dumps
+figma_clean_full.json
+figma_dump.json
+home_page_node.json
+
+# OS files
+.DS_Store
+Thumbs.db
