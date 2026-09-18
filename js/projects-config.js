@@ -18,7 +18,7 @@
  *   subtitle: "Punchy one-sentence tagline",
  *   industry: "INDUSTRY NAME",
  *   year: "2024",
- *   categories: ["branding"], // Choose: "branding" | "digital-design" | "business-design"
+ *   categories: ["branding"], // Choose: "branding" | "digital-design"
  *   thumbnail: "assets/projects/thumbnails/your-thumbnail.png",
  *   summary: "Short description for project cards, quick-view modals, and search previews.",
  *
@@ -92,7 +92,7 @@ export const PROJECTS_CONFIG = {
     subtitle: "Precision Design for a Specialized Market",
     industry: "DENTAL & MEDICAL HYGIENE",
     year: "2024",
-    categories: ["branding", "business-design"],
+    categories: ["branding"],
     thumbnail: "assets/projects/assets/becht/projectcardbecht.png",
     summary: "Visual identity, roll-up banners, point-of-sale branding, and official launch event invitations for BN DENTAL celebrating their appointment as the authorized distributor of Alfred Becht GmbH in Algeria.",
     services: [
@@ -177,7 +177,7 @@ export const PROJECTS_CONFIG = {
     subtitle: "Reviving a Legacy Through Design",
     industry: "HERITAGE FOOD & CHARCUTERIE",
     year: "2024",
-    categories: ["branding", "business-design"],
+    categories: ["branding"],
     thumbnail: "assets/projects/thumbnails/mitidja.png",
     summary: "Revitalizing a legacy Algerian charcuterie brand through a modernized visual identity, product catalogue, tri-fold brochures, flyers, and business stationery.",
     services: [
@@ -318,7 +318,7 @@ export const PROJECTS_CONFIG = {
     subtitle: "Exploring New Directions for a Classic Brand",
     industry: "FOOD & FMCG PACKAGING",
     year: "2024",
-    categories: ["branding", "business-design"],
+    categories: ["branding"],
     thumbnail: "assets/projects/thumbnails/vagdor.png",
     summary: "Developing packaging iterations and flavor extension systems for a classic Algerian chips brand, balancing brand continuity with modern shelf appeal.",
     services: [
@@ -426,7 +426,7 @@ export const PROJECTS_CONFIG = {
     subtitle: "Scalable Component Architecture",
     industry: "SAAS & ENTERPRISE SOFTWARE",
     year: "2024",
-    categories: ["digital-design", "business-design"],
+    categories: ["digital-design"],
     thumbnail: "assets/projects/thumbnails/designsystem.png",
     summary: "A multi-platform enterprise design system bridging Figma tokens and production components for consistent, accessible digital product development.",
     services: [
@@ -567,7 +567,7 @@ export const PROJECTS_CONFIG = {
     subtitle: "Authentic Indian Snacks Delivered",
     industry: "AUTHENTIC INDIAN SNACKS & FMCG",
     year: "2024",
-    categories: ["branding", "business-design", "digital-design"],
+    categories: ["branding", "digital-design"],
     thumbnail: "assets/projects/assets/asiancooks/projectcardqsiqncooks.png",
     summary: "Complete brand identity, vibrant spice packaging, mascot design, and a mobile-first e-commerce app for an authentic Indian snack delivery brand.",
     services: [
