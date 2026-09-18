@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — BuiltByJimi Design Studio</title>
+  <meta name="description" content="Explore featured branding, digital design, and business design projects by BuiltByJimi design studio.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/projects.css">
+</head>
+<body>
+
+  <div class="projects-app">
+    <!-- Top Filter & Navigation Bar -->
+    <header class="projects-header">
+      <span class="filter-by-label" id="filterByLabel">FILTER BY</span>
+      <div class="filter-tabs-wrapper">
+        <nav class="filter-tabs" aria-label="Filter projects by discipline" role="tablist">
+          <button class="filter-tab" type="button" data-filter="branding" role="tab" aria-selected="false">
+            <span class="tab-text">BRANDING</span>
+            <span class="tab-cross" aria-hidden="true">×</span>
+          </button>
+          <button class="filter-tab" type="button" data-filter="digital-design" role="tab" aria-selected="false">
+            <span class="tab-text">DIGITAL DESIGN</span>
+            <span class="tab-cross" aria-hidden="true">×</span>
+          </button>
+          <button class="filter-tab" type="button" data-filter="business-design" role="tab" aria-selected="false">
+            <span class="tab-text">BUSINESS DESIGN</span>
+            <span class="tab-cross" aria-hidden="true">×</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Carousel Showcase Stage -->
+    <main class="showcase-stage" id="showcaseStage">
+      <!-- Carousel Viewport & Track -->
+      <section class="carousel-viewport" id="carouselViewport" aria-label="Projects Gallery">
+        <div class="carousel-track" id="carouselTrack">
+          <!-- Dynamically populated by js/projects.js -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Bottom Navigation Pill (Figma div.nav_container) -->
+    <nav class="floating-nav nav_container" id="floatingNav">
+      <a href="index.html" class="nav-brand">© BuiltByJimi</a>
+      <div class="nav-links">
+        <a href="projects.html" class="nav-item active">
+          <span class="nav-dot-active" aria-hidden="true"></span>
+          <span>Work</span>
+        </a>
+        <a href="mailto:hello@builtbyjimi.com?subject=lets%20make%20something%20:)" class="nav-item">Contact</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Project Quick View / Detach Modal -->
+  <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close dialog">&times;</button>
+      <div class="modal-img-wrap">
+        <img class="modal-img" id="modalImg" src="" alt="">
+      </div>
+      <div class="modal-body">
+        <div class="modal-num" id="modalNum">PROJECT // 01</div>
+        <h2 class="modal-title" id="modalTitle">Project Title</h2>
+        <div class="modal-meta-grid">
+          <div>
+            <strong>INDUSTRY</strong><br>
+            <span id="modalIndustry">—</span>
+          </div>
+          <div>
+            <strong>ROLE</strong><br>
+            <span id="modalRole">—</span>
+          </div>
+        </div>
+        <p class="modal-desc" id="modalDesc">Project description goes here.</p>
+        <a href="#" class="modal-btn" id="modalLink">
+          <span>View Detailed Case Study</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Scripts -->
+  <script src="js/projects-data.js"></script>
+  <script src="js/projects.js"></script>
+</body>
+</html>

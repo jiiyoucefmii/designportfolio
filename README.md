@@ -1,4 +1,4 @@
-# builtbyjimi — Portfolio
+# BuiltByJimi — Portfolio
 
 A high-performance design studio portfolio website crafted with precision from Figma designs, featuring inertial smooth scrolling, center-pinned hero video shrink animations, interactive services exploration, and responsive layouts for desktop and mobile.
 

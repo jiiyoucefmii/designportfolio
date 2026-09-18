@@ -12,3 +12,6 @@ home_page_node.json
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temp Figma frame exports
+frame*.png

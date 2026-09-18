@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Detail | BuiltByJimi</title>
+  <meta name="description" content="Project case study with interactive design showcase and video breakdowns.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  
+  <!-- Google Fonts: Instrument Serif for elegant editorial serif title, Plus Jakarta Sans, Space Grotesk, Space Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/project-detail.css?v=3.0">
+</head>
+<body>
+
+  <main class="detail-page-wrapper">
+    
+    <!-- 1. FULLSCREEN HERO SECTION (16px padding around container, similar to homepage) -->
+    <section class="detail-hero-viewport" id="heroViewport">
+      <div class="detail-hero-box" id="heroBox">
+        <!-- Top action buttons (Expand & Next) matching Screenshot 1 -->
+        <div class="hero-top-actions">
+          <button class="hero-icon-btn" id="heroExpandBtn" title="Expand View" aria-label="Expand View">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </button>
+          <button class="hero-icon-btn" id="heroSkipBtn" title="Scroll to Details" aria-label="Scroll to Details">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dynamic Hero Media (Video / Image / Graphic) injected via JS -->
+        <div class="hero-media-wrapper" id="heroMediaWrapper"></div>
+      </div>
+    </section>
+
+    <!-- 2. PROJECT HEADER SECTION (Matching exact Figma Desktop & Mobile designs) -->
+    <section class="detail-header-container" id="headerSection">
+      <!-- Injected dynamically via JS: Title, Industry, What we did, Story, More Info -->
+    </section>
+
+    <!-- 3. REST OF SECTIONS: ASSETS STREAM (1-col or 2-col, 16px side padding, 20px gaps) -->
+    <section class="detail-assets-container" id="assetsStream">
+      <!-- Injected dynamically via JS: 1-col or 2-col images and video slots -->
+    </section>
+
+    <!-- 4. PINNED SCROLL-DRIVEN HORIZONTAL REVEAL / SIDE DRAWER (Matching frameone -> framelast) -->
+    <section class="next-project-pin-section" id="nextProjectPinSection">
+      <div class="next-project-pin-container" id="nextProjectPinContainer">
+        
+        <!-- Base Asset Visual (Full screen 100vw in frameone, reveals behind drawer in framelast) -->
+        <div class="next-base-asset" id="nextBaseAsset">
+          <div class="next-base-inner">
+            <img class="next-base-img" id="nextBaseImg" src="" alt="Project Visual">
+          </div>
+        </div>
+
+        <!-- Sliding Next Project Drawer (Slides in from right: 0 across the screen to 72vw) -->
+        <a href="#" class="next-drawer-panel" id="nextDrawerLink" aria-label="Incoming Next Project">
+          <div class="next-drawer-inner">
+            <div class="next-current-divider"></div>
+            <div class="next-current-grid">
+              <div class="next-label-col">
+                <h2 class="next-label-text">NEXT PROJECT</h2>
+              </div>
+              <div class="next-teaser-col" id="nextTeaserCol">
+                <div class="next-teaser-img-box">
+                  <img class="next-teaser-img" id="nextTeaserImg" src="" alt="Next Project Teaser">
+                </div>
+                <div class="next-teaser-meta">
+                  <h3 class="next-teaser-title" id="nextTeaserTitle"></h3>
+                  <p class="next-teaser-subtitle" id="nextTeaserSubtitle"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- 5. GLOBAL FOOTER (Matching exact screenshot design) -->
+    <footer class="site-footer" id="contact">
+      <div class="footer-container">
+        <!-- Big statement -->
+        <div class="footer-headline-block">
+          <h3 class="footer-heading-sub">I AM INDUSTRY &amp; TIME-ZONE AGNOSTIC.</h3>
+          <h3 class="footer-heading-sub">BECAUSE DESIGN ISN’T LIMITED BY CONTEXT, ONLY BY IMAGINATION.</h3>
+          <h2 class="footer-heading-main lime-accent">LET’S MAKE SOMETHING THAT MATTERS.&#9786;</h2>
+        </div>
+
+        <!-- Contact Links Matrix -->
+        <div class="footer-matrix">
+          <div class="matrix-label">
+            <span class="label-mono">CONTACT</span>
+          </div>
+          <div class="matrix-grid">
+            <div class="matrix-col">
+              <span class="matrix-title">INSTAGRAM</span>
+              <a href="https://instagram.com/jii_youcef_mii" target="_blank" rel="noopener" class="matrix-link">@jii_youcef_mii</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Legal / Copyright (Centered) -->
+        <div class="footer-bottom">
+          <div class="footer-legal-centered">
+            <a href="#" class="legal-link">PRIVACY POLICY</a>
+            <a href="#" class="legal-link">TERMS &amp; CONDITIONS</a>
+            <span class="copyright-text">© 2026 ALL RIGHTS RESERVED.</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- FLOATING NAVIGATION PILL (Fixed bottom, exact stats: 302.7px × 41.59px, 3rem margin) -->
+    <div class="nav_container" id="floatingNav">
+      <div class="nav_inner">
+        <a href="./index.html" class="nav_link">© BuiltByJimi</a>
+        <a href="./projects.html" class="nav_link active">Work</a>
+        <a href="mailto:hello@builtbyjimi.com?subject=lets%20make%20something%20:)" class="nav_link">Contact</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- GSAP & ScrollTrigger CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Modular Renderer -->
+  <script type="module" src="./js/project-detail.js?v=3.0"></script>
+</body>
+</html>

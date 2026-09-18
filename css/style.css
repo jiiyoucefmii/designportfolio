@@ -588,6 +588,11 @@ img, video {
   background-color: var(--color-accent-lime);
 }
 
+.card-inner.is-non-clickable {
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ==========================================================================
    SECTION: OUR APPROACH
    Figma: 100% pure white 1px border (#ffffff) and clean vertical separator
@@ -764,9 +769,10 @@ img, video {
 }
 
 .matrix-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: clamp(24px, 5.5vw, 72px);
+  flex-wrap: wrap;
 }
 
 .matrix-col {
