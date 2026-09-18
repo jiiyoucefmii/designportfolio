@@ -270,39 +270,39 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def run_server():
-    server_address = ('', PORT)
-    socketserver.TCPServer.allow_reuse_address = True
-
     import webbrowser
     import threading
     import time
 
     def launch_browser():
-        time.sleep(0.6)
+        time.sleep(0.8)
         try:
-            webbrowser.open(f"http://localhost:{PORT}/dashboard.html")
+            webbrowser.open(f"http://127.0.0.1:{PORT}/dashboard.html")
         except Exception:
             pass
 
+    server_class = http.server.ThreadingHTTPServer
+    DashboardRequestHandler.protocol_version = "HTTP/1.1"
+
     try:
-        httpd = socketserver.TCPServer(server_address, DashboardRequestHandler)
+        httpd = server_class(('0.0.0.0', PORT), DashboardRequestHandler)
     except OSError:
         print("==================================================", flush=True)
         print(" BuiltByJimi Portfolio & CMS Dashboard Server", flush=True)
-        print(f" [Notice] Server is ALREADY running on port {PORT}!", flush=True)
-        print(f" Opening dashboard: http://localhost:{PORT}/dashboard.html", flush=True)
+        print(f" [Notice] Port {PORT} is already in use.", flush=True)
+        print(f" Opening dashboard: http://127.0.0.1:{PORT}/dashboard.html", flush=True)
         print("==================================================", flush=True)
-        webbrowser.open(f"http://localhost:{PORT}/dashboard.html")
+        webbrowser.open(f"http://127.0.0.1:{PORT}/dashboard.html")
         return
 
     with httpd:
         print("==================================================", flush=True)
         print(" BuiltByJimi Portfolio & CMS Dashboard Server", flush=True)
-        print(f" - Portfolio:  http://localhost:{PORT}", flush=True)
-        print(f" - Dashboard:  http://localhost:{PORT}/dashboard.html", flush=True)
-        print(" Opening dashboard in your default browser...", flush=True)
-        print(" Press Ctrl+C to stop the server.", flush=True)
+        print(f" -> Dashboard:  http://127.0.0.1:{PORT}/dashboard.html", flush=True)
+        print(f" -> Portfolio:  http://127.0.0.1:{PORT}", flush=True)
         print("==================================================", flush=True)
+        print(" Opening dashboard in your default browser...", flush=True)
+        print(" Press Ctrl+C in this terminal to stop the server.", flush=True)
 
         threading.Thread(target=launch_browser, daemon=True).start()
 
