@@ -300,42 +300,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Dynamic Work Cards Clickability Sync from PROJECTS_DATA
-  if (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA)) {
+  // Dynamic Work Cards Clickability & Content Sync from CMS / PROJECTS_DATA
+  function syncWorkCards(dataList) {
+    const list = dataList || (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA) ? PROJECTS_DATA : []);
+    if (!list || list.length === 0) return;
+
     document.querySelectorAll('.work-card[data-project-id]').forEach((card) => {
       const id = card.getAttribute('data-project-id');
-      const proj = PROJECTS_DATA.find((p) => p.id === id);
-      const isLive = proj && Boolean(proj.isLive || proj.link || id === 'becht' || id === 'asiancooks');
-      const currentInner = card.querySelector('.card-inner');
+      const proj = list.find((p) => p.id === id);
+      if (!proj) return;
+
+      const isLive = Boolean(proj.isLive !== false);
+      let currentInner = card.querySelector('.card-inner');
       if (!currentInner) return;
 
+      const cleanLink = `/${id}`;
+
+      // 1. Ensure clickable link element
       if (isLive) {
-        let linkEl = currentInner;
         if (currentInner.tagName !== 'A') {
-          linkEl = document.createElement('a');
+          const linkEl = document.createElement('a');
           linkEl.className = 'card-inner';
-          linkEl.href = (proj && proj.link) || `project-detail.html?id=${id}`;
+          linkEl.href = cleanLink;
           linkEl.innerHTML = currentInner.innerHTML;
           currentInner.replaceWith(linkEl);
+          currentInner = linkEl;
         } else {
-          linkEl.href = (proj && proj.link) || `project-detail.html?id=${id}`;
-          linkEl.classList.remove('is-non-clickable');
-        }
-
-        // Live image & text sync
-        if (proj.image) {
-          const img = linkEl.querySelector('.card-image-wrap img');
-          if (img && img.getAttribute('src') !== proj.image) {
-            img.src = proj.image;
-          }
-        }
-        if (proj.title) {
-          const title = linkEl.querySelector('.card-title');
-          if (title) title.textContent = proj.title;
-        }
-        if (proj.subtitle || proj.industry) {
-          const sub = linkEl.querySelector('.card-subtitle');
-          if (sub) sub.textContent = proj.subtitle || proj.industry;
+          currentInner.href = cleanLink;
+          currentInner.classList.remove('is-non-clickable');
         }
       } else {
         if (currentInner.tagName === 'A') {
@@ -343,10 +335,97 @@ document.addEventListener('DOMContentLoaded', () => {
           div.className = 'card-inner is-non-clickable';
           div.innerHTML = currentInner.innerHTML;
           currentInner.replaceWith(div);
+          currentInner = div;
         } else {
           currentInner.classList.add('is-non-clickable');
         }
       }
+
+      // 2. LIVE ASSET & TEXT SYNC (Always runs for every card)
+      if (proj.image) {
+        const img = currentInner.querySelector('.card-image-wrap img');
+        if (img && img.getAttribute('src') !== proj.image) {
+          img.src = proj.image;
+        }
+      }
+      if (proj.title) {
+        const title = currentInner.querySelector('.card-title');
+        if (title && title.textContent !== proj.title) {
+          title.textContent = proj.title;
+        }
+      }
+      if (proj.subtitle || proj.industry) {
+        const sub = currentInner.querySelector('.card-subtitle');
+        const text = proj.subtitle || proj.industry;
+        if (sub && sub.textContent !== text) {
+          sub.textContent = text;
+        }
+      }
     });
   }
+
+  // Initial sync with bundled data
+  syncWorkCards();
+
+  // Async sync with live API and local storage with anti-cache query
+  async function fetchLiveProjectsForHome() {
+    try {
+      const res = await fetch(`/api/projects?_t=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.projects) {
+          const list = Object.values(data.projects).map(p => ({
+            id: p.id,
+            title: p.title,
+            subtitle: p.subtitle,
+            industry: p.industry,
+            image: p.thumbnail,
+            isLive: Boolean(p.isLive !== false),
+            link: `/${p.id}`
+          }));
+          syncWorkCards(list);
+          try {
+            localStorage.setItem('builtbyjimi_projects_cache', JSON.stringify(data.projects));
+          } catch (_) {}
+          return;
+        }
+      }
+    } catch (_) {}
+
+    try {
+      const cached = localStorage.getItem('builtbyjimi_projects_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const list = Object.values(parsed).map(p => ({
+          id: p.id,
+          title: p.title,
+          subtitle: p.subtitle,
+          industry: p.industry,
+          image: p.thumbnail,
+          isLive: Boolean(p.isLive !== false),
+          link: `/${p.id}`
+        }));
+        syncWorkCards(list);
+      }
+    } catch (_) {}
+  }
+
+  fetchLiveProjectsForHome();
+
+  // Real-time broadcast channel from CMS Dashboard
+  if (typeof BroadcastChannel !== 'undefined') {
+    const channel = new BroadcastChannel('builtbyjimi_cms');
+    channel.onmessage = async (event) => {
+      if (event.data && event.data.type === 'PROJECTS_UPDATED') {
+        console.log('[CMS Sync] Received project update broadcast on homepage, syncing work cards...');
+        await fetchLiveProjectsForHome();
+      }
+    };
+  }
+
+  window.addEventListener('storage', async (e) => {
+    if (e.key === 'builtbyjimi_cms_updated' || e.key === 'builtbyjimi_projects_cache') {
+      await fetchLiveProjectsForHome();
+    }
+  });
 });

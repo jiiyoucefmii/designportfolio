@@ -18,22 +18,22 @@ const PROJECTS_DATA = [
     "image": "assets/projects/assets/becht/projectcardbecht.png",
     "description": "Visual identity, roll-up banners, point-of-sale branding, and official launch event invitations for BN DENTAL celebrating their appointment as the authorized distributor of Alfred Becht GmbH in Algeria.",
     "isLive": true,
-    "link": "project-detail.html?id=becht"
+    "link": "/becht"
   },
   {
     "id": "mitidja",
     "number": "02",
-    "title": "Mitidja",
+    "title": "Mitidja Charcuterie",
     "categories": [
       "branding"
     ],
     "industry": "HERITAGE FOOD & CHARCUTERIE",
     "role": "BRANDING | IDENTITY REDESIGN | PACKAGING",
     "subtitle": "Reviving a Legacy Through Design",
-    "image": "assets/projects/thumbnails/mitidja.png",
+    "image": "assets/projects/assets/mitidja/logomitidja.png",
     "description": "Revitalizing a legacy Algerian charcuterie brand through a modernized visual identity, product catalogue, tri-fold brochures, flyers, and business stationery.",
-    "isLive": false,
-    "link": null
+    "isLive": true,
+    "link": "/mitidja"
   },
   {
     "id": "noctael",
@@ -49,7 +49,7 @@ const PROJECTS_DATA = [
     "image": "assets/projects/assets/noctael/tthumbnail.png",
     "description": "From initial naming to 3D drop visualization and cinematic reels, a nocturnal minimalist streetwear brand identity brought to life in digital and physical forms.",
     "isLive": true,
-    "link": "project-detail.html?id=noctael"
+    "link": "/noctael"
   },
   {
     "id": "vagdor",
@@ -61,7 +61,7 @@ const PROJECTS_DATA = [
     "industry": "FOOD & FMCG PACKAGING",
     "role": "BRAND EXTENSION | PACKAGING DESIGN | COLOR SYSTEM",
     "subtitle": "Exploring New Directions for a Classic Brand",
-    "image": "assets/projects/thumbnails/vagdor.png",
+    "image": "assets/projects/assets/vagdor/vagdorlogo.png",
     "description": "Developing packaging iterations and flavor extension systems for a classic Algerian chips brand, balancing brand continuity with modern shelf appeal.",
     "isLive": false,
     "link": null
@@ -84,7 +84,7 @@ const PROJECTS_DATA = [
   {
     "id": "designsystem",
     "number": "06",
-    "title": "Enterprise Design System",
+    "title": "Travel Platform",
     "categories": [
       "digital-design"
     ],
@@ -92,14 +92,14 @@ const PROJECTS_DATA = [
     "role": "DESIGN SYSTEMS | COMPONENT LIBRARY | TOKEN ARCHITECTURE",
     "subtitle": "Scalable Component Architecture",
     "image": "assets/projects/thumbnails/designsystem.png",
-    "description": "A multi-platform enterprise design system bridging Figma tokens and production components for consistent, accessible digital product development.",
+    "description": "A multi-platform design system bridging Figma tokens and production components for consistent, accessible digital product development.",
     "isLive": false,
     "link": null
   },
   {
     "id": "pharma",
     "number": "07",
-    "title": "PharmaTech",
+    "title": "Pharma",
     "categories": [
       "digital-design"
     ],
@@ -114,7 +114,7 @@ const PROJECTS_DATA = [
   {
     "id": "delivery",
     "number": "08",
-    "title": "Express Delivery",
+    "title": "Pharma Delivery",
     "categories": [
       "digital-design"
     ],
@@ -122,7 +122,7 @@ const PROJECTS_DATA = [
     "role": "DISPATCH UI | MOBILE APP | USER FLOWS",
     "subtitle": "Courier Dispatch & Tracking Architecture",
     "image": "assets/projects/thumbnails/delivery.png",
-    "description": "Urban courier dispatch and live telemetry tracking platform uniting fleet operators, couriers, and recipients.",
+    "description": "Pharma courier dispatch and live telemetry tracking platform uniting fleet operators, couriers, and recipients.",
     "isLive": false,
     "link": null
   },
@@ -140,7 +140,7 @@ const PROJECTS_DATA = [
     "image": "assets/projects/assets/asiancooks/projectcardqsiqncooks.png",
     "description": "Complete brand identity, vibrant spice packaging, mascot design, and a mobile-first e-commerce app for an authentic Indian snack delivery brand.",
     "isLive": true,
-    "link": "project-detail.html?id=asiancooks"
+    "link": "/asiancooks"
   }
 ];
 

@@ -257,19 +257,40 @@ class DashboardController {
     });
 
     this.btnAddBlockDouble.addEventListener('click', () => {
-      this.openAssetPicker('Select First Item for 2-Col Pair', (asset1) => {
-        this.openAssetPicker('Select Second Item for 2-Col Pair', (asset2) => {
-          if (!this.currentProject.blocks) this.currentProject.blocks = [];
-          this.currentProject.blocks.push({
-            layout: '2-col',
-            items: [
-              { type: asset1.isVideo ? 'video' : 'image', src: asset1.relPath, alt: asset1.name },
-              { type: asset2.isVideo ? 'video' : 'image', src: asset2.relPath, alt: asset2.name }
-            ]
+      this.openAssetPicker('Select First Item for 2-Col Pair (Column 1)', (asset1) => {
+        if (!this.currentProject.blocks) this.currentProject.blocks = [];
+        const isVid1 = asset1.isVideo || (asset1.relPath && asset1.relPath.toLowerCase().endsWith('.mp4'));
+        const newBlock = {
+          layout: '2-col',
+          items: [
+            {
+              type: isVid1 ? 'video' : 'image',
+              src: asset1.relPath,
+              alt: asset1.name ? asset1.name.replace(/\.[^/.]+$/, '') : ''
+            },
+            {
+              type: 'image',
+              src: '',
+              alt: ''
+            }
+          ]
+        };
+        this.currentProject.blocks.push(newBlock);
+        this.renderBlocksStream();
+        this.showToast('Column 1 selected! Now select Column 2 (or pick later).');
+
+        setTimeout(() => {
+          this.openAssetPicker('Select Second Item for 2-Col Pair (Column 2)', (asset2) => {
+            const isVid2 = asset2.isVideo || (asset2.relPath && asset2.relPath.toLowerCase().endsWith('.mp4'));
+            newBlock.items[1] = {
+              type: isVid2 ? 'video' : 'image',
+              src: asset2.relPath,
+              alt: asset2.name ? asset2.name.replace(/\.[^/.]+$/, '') : ''
+            };
+            this.renderBlocksStream();
+            this.showToast('2-Column Pair added successfully!');
           });
-          this.renderBlocksStream();
-          this.showToast('2-Column Pair added');
-        });
+        }, 100);
       });
     });
 
@@ -309,8 +330,9 @@ class DashboardController {
         const file = e.target.files[0];
         const uploaded = await this.uploadSingleFile(file);
         if (uploaded && this.pickerCallback) {
-          this.pickerCallback(uploaded);
+          const cb = this.pickerCallback;
           this.closeAssetPicker();
+          cb(uploaded);
         }
       }
     });
@@ -353,7 +375,7 @@ class DashboardController {
 
     // Update Topbar
     this.topbarProjectTitle.textContent = this.currentProject.title || id;
-    this.btnPreviewProject.href = `project-detail.html?id=${id}`;
+    this.btnPreviewProject.href = `/${id}`;
     this.updateLiveBadges();
 
     // Populate Tab 1: Visual Blocks
@@ -613,22 +635,29 @@ class DashboardController {
           sBox.addEventListener('click', () => {
             this.openAssetPicker(`Replace Media for Column ${slotIdx + 1}`, (asset) => {
               block.items[slotIdx].src = asset.relPath;
-              block.items[slotIdx].type = asset.isVideo ? 'video' : 'image';
+              block.items[slotIdx].type = (asset.isVideo || asset.relPath.toLowerCase().endsWith('.mp4')) ? 'video' : 'image';
               this.renderBlocksStream();
             });
           });
         });
       }
 
+      card.querySelectorAll('video').forEach(vid => {
+        vid.muted = true;
+        vid.defaultMuted = true;
+        vid.loop = true;
+        vid.play().catch(() => {});
+      });
+
       this.blocksStreamList.appendChild(card);
     });
   }
 
   getSingleBlockHTML(block) {
-    const isVid = block.type === 'video' || (block.src && block.src.endsWith('.mp4'));
+    const isVid = block.type === 'video' || (block.src && (block.src.toLowerCase().endsWith('.mp4') || block.src.toLowerCase().endsWith('.webm')));
     return `
       <div class="block-media-preview-single">
-        ${isVid ? `<video src="${block.src}" muted loop autoplay playsinline></video>` : `<img src="${block.src}" alt="${block.alt || ''}">`}
+        ${isVid ? `<video src="${block.src}" muted loop autoplay playsinline webkit-playsinline></video>` : `<img src="${block.src}" alt="${block.alt || ''}">`}
         <div class="slot-actions-overlay">
           <button class="slot-btn">Change Media</button>
         </div>
@@ -641,11 +670,11 @@ class DashboardController {
     return `
       <div class="block-media-preview-double">
         ${items.map((item, idx) => {
-          const isVid = item.type === 'video' || (item.src && item.src.endsWith('.mp4'));
+          const isVid = item.type === 'video' || (item.src && (item.src.toLowerCase().endsWith('.mp4') || item.src.toLowerCase().endsWith('.webm')));
           return `
             <div class="double-slot-box" data-slot="${idx}">
               <span class="slot-label">COL ${idx + 1}</span>
-              ${item.src ? (isVid ? `<video src="${item.src}" muted loop autoplay playsinline></video>` : `<img src="${item.src}" alt="${item.alt || ''}">`) : '<div style="color: var(--text-muted); font-size: 11px;">Empty Slot</div>'}
+              ${item.src ? (isVid ? `<video src="${item.src}" muted loop autoplay playsinline webkit-playsinline></video>` : `<img src="${item.src}" alt="${item.alt || ''}">`) : '<div style="color: var(--text-muted); font-size: 11px;">Empty Slot</div>'}
               <div class="slot-actions-overlay">
                 <button class="slot-btn">Replace</button>
               </div>
@@ -714,11 +743,11 @@ class DashboardController {
       const card = document.createElement('div');
       card.className = 'media-card';
 
-      const isVid = asset.isVideo || (asset.relPath && asset.relPath.endsWith('.mp4'));
+      const isVid = asset.isVideo || (asset.relPath && (asset.relPath.toLowerCase().endsWith('.mp4') || asset.relPath.toLowerCase().endsWith('.webm'))) || (asset.name && (asset.name.toLowerCase().endsWith('.mp4') || asset.name.toLowerCase().endsWith('.webm')));
 
       card.innerHTML = `
         <div class="media-thumb">
-          ${isVid ? `<video src="${asset.relPath}" muted loop playsinline></video>` : `<img src="${asset.relPath}" alt="${asset.name}" loading="lazy">`}
+          ${isVid ? `<video src="${asset.relPath}" muted loop autoplay playsinline webkit-playsinline></video>` : `<img src="${asset.relPath}" alt="${asset.name}" loading="lazy">`}
         </div>
         <div class="media-info">
           <div class="media-filename" title="${asset.name}">${asset.name}</div>
@@ -734,6 +763,14 @@ class DashboardController {
           </div>
         </div>
       `;
+
+      const vid = card.querySelector('video');
+      if (vid) {
+        vid.muted = true;
+        vid.defaultMuted = true;
+        vid.loop = true;
+        vid.play().catch(() => {});
+      }
 
       card.querySelector('.btn-use-card').addEventListener('click', () => {
         this.currentProject.thumbnail = asset.relPath;
@@ -844,21 +881,30 @@ class DashboardController {
       card.className = 'media-card';
       card.style.cursor = 'pointer';
 
-      const isVid = asset.isVideo || (asset.relPath && asset.relPath.endsWith('.mp4'));
+      const isVid = asset.isVideo || (asset.relPath && (asset.relPath.toLowerCase().endsWith('.mp4') || asset.relPath.toLowerCase().endsWith('.webm'))) || (asset.name && (asset.name.toLowerCase().endsWith('.mp4') || asset.name.toLowerCase().endsWith('.webm')));
 
       card.innerHTML = `
         <div class="media-thumb">
-          ${isVid ? `<video src="${asset.relPath}" muted loop></video>` : `<img src="${asset.relPath}" alt="${asset.name}">`}
+          ${isVid ? `<video src="${asset.relPath}" muted loop autoplay playsinline webkit-playsinline></video>` : `<img src="${asset.relPath}" alt="${asset.name}">`}
         </div>
         <div class="media-info">
           <div class="media-filename">${asset.name}</div>
         </div>
       `;
 
+      const vid = card.querySelector('video');
+      if (vid) {
+        vid.muted = true;
+        vid.defaultMuted = true;
+        vid.loop = true;
+        vid.play().catch(() => {});
+      }
+
       card.addEventListener('click', () => {
         if (this.pickerCallback) {
-          this.pickerCallback(asset);
+          const cb = this.pickerCallback;
           this.closeAssetPicker();
+          cb(asset);
         }
       });
 
@@ -921,9 +967,21 @@ class DashboardController {
       });
 
       if (res.ok) {
-        this.showToast('All changes saved! Updating preview...');
-        this.btnPreviewProject.href = `project-detail.html?id=${this.currentId}&v=${Date.now()}`;
+        this.showToast('All changes saved! Directly applied to portfolio projects.');
+        this.btnPreviewProject.href = `/${this.currentId}`;
         this.renderSidebar(this.projectSearchInput.value);
+
+        // Update local storage cache
+        try {
+          localStorage.setItem('builtbyjimi_projects_cache', JSON.stringify(this.projects));
+          localStorage.setItem('builtbyjimi_cms_updated', Date.now().toString());
+        } catch (_) {}
+
+        // Broadcast to all open portfolio tabs
+        if (typeof BroadcastChannel !== 'undefined') {
+          const channel = new BroadcastChannel('builtbyjimi_cms');
+          channel.postMessage({ type: 'PROJECTS_UPDATED', timestamp: Date.now(), projectId: this.currentId });
+        }
       } else {
         const data = await res.json();
         this.showToast(`Save failed: ${data.message}`, true);

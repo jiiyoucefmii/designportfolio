@@ -30,6 +30,7 @@ mimetypes.add_type('image/jpeg', '.jpeg')
 mimetypes.add_type('image/webp', '.webp')
 mimetypes.add_type('image/svg+xml', '.svg')
 mimetypes.add_type('video/mp4', '.mp4')
+mimetypes.add_type('video/webm', '.webm')
 
 
 def read_projects_config():
@@ -96,9 +97,8 @@ export function getProjectsList() {{
     role: p.services ? p.services.slice(0, 3).join(' | ') : '',
     categories: p.categories || [],
     image: p.thumbnail,
-    description: p.summary,
-    isLive: Boolean(p.isLive || p.id === 'becht' || p.id === 'asiancooks'),
-    link: (p.isLive || p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${{p.id}}` : null
+    isLive: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')),
+    link: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')) ? `/${{p.id}}` : null
   }}));
 }}
 
@@ -133,7 +133,8 @@ export function getProjectsDetailData() {{
 
     projects_list = []
     for key, p in config_dict.items():
-        is_live = bool(p.get("isLive") or p.get("id") in ["becht", "asiancooks"])
+        is_live = bool(p.get("isLive") if p.get("isLive") is not None else (p.get("id") in ["becht", "asiancooks"]))
+        clean_link = f"/{p.get('id', key)}"
         projects_list.append({
             "id": p.get("id", key),
             "number": p.get("number", "01"),
@@ -145,7 +146,7 @@ export function getProjectsDetailData() {{
             "image": p.get("thumbnail", ""),
             "description": p.get("summary", ""),
             "isLive": is_live,
-            "link": f"project-detail.html?id={p.get('id', key)}" if is_live else None
+            "link": clean_link if is_live else None
         })
 
     data_json = json.dumps(projects_list, indent=2, ensure_ascii=False)
@@ -163,6 +164,79 @@ if (typeof module !== 'undefined' && module.exports) {{
 """
     with open(data_path, 'w', encoding='utf-8') as f:
         f.write(data_content)
+
+    # Directly synchronize index.html on disk with updated thumbnails and titles
+    sync_index_html(config_dict)
+
+    # Synchronize static directory entrypoints for universal hosting
+    detail_html_path = os.path.join(BASE_DIR, 'project-detail.html')
+    if os.path.exists(detail_html_path):
+        with open(detail_html_path, 'r', encoding='utf-8') as f:
+            detail_html_content = f.read()
+        for key in config_dict.keys():
+            p_dir = os.path.join(BASE_DIR, key)
+            os.makedirs(p_dir, exist_ok=True)
+            with open(os.path.join(p_dir, 'index.html'), 'w', encoding='utf-8') as pf:
+                pf.write(detail_html_content)
+
+
+def sync_index_html(config_dict):
+    """Synchronizes index.html featured work cards directly on disk with the latest project metadata and thumbnails."""
+    index_path = os.path.join(BASE_DIR, 'index.html')
+    if not os.path.exists(index_path):
+        return
+
+    with open(index_path, 'r', encoding='utf-8') as f:
+        html = f.read()
+
+    for pid, p in config_dict.items():
+        title = p.get('title', '')
+        subtitle = p.get('subtitle') or p.get('industry', '')
+        thumb = p.get('thumbnail', '')
+        if not thumb:
+            continue
+
+        pattern = re.compile(
+            rf'(<article\s+class="work-card[^"]*"\s+data-project-id="{re.escape(pid)}">)([\s\S]*?)(</article>)',
+            re.IGNORECASE
+        )
+
+        def replace_card(m):
+            start_tag = m.group(1)
+            inner = m.group(2)
+            end_tag = m.group(3)
+
+            inner = re.sub(r'<div\s+class="card-inner[^"]*">', f'<a href="/{pid}" class="card-inner">', inner)
+            inner = re.sub(r'<a\s+href="[^"]*"\s+class="card-inner[^"]*">', f'<a href="/{pid}" class="card-inner">', inner)
+            if '<a href="/' in inner and '</div>\n          </article>' in (inner + '\n          ' + end_tag):
+                inner = re.sub(r'</div>(\s*)$', r'</a>\1', inner)
+
+            inner = re.sub(
+                r'<img\s+src="[^"]*"\s+alt="[^"]*"\s+loading="lazy">',
+                f'<img src="{thumb}" alt="{title}" loading="lazy">',
+                inner
+            )
+
+            if title:
+                inner = re.sub(
+                    r'<h3\s+class="card-title">[^<]*</h3>',
+                    f'<h3 class="card-title">{title}</h3>',
+                    inner
+                )
+
+            if subtitle:
+                inner = re.sub(
+                    r'<p\s+class="card-subtitle">[^<]*</p>',
+                    f'<p class="card-subtitle">{subtitle}</p>',
+                    inner
+                )
+
+            return f'{start_tag}{inner}{end_tag}'
+
+        html = pattern.sub(replace_card, html)
+
+    with open(index_path, 'w', encoding='utf-8') as f:
+        f.write(html)
 
 
 class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -184,6 +258,19 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def serve_html_file(self, rel_path):
+        full_path = os.path.join(BASE_DIR, rel_path)
+        if not os.path.exists(full_path):
+            self.send_error(404, "File not found")
+            return
+        with open(full_path, 'rb') as f:
+            content = f.read()
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Content-Length', str(len(content)))
+        self.end_headers()
+        self.wfile.write(content)
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
@@ -191,6 +278,12 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        # Strip caching validation headers so browser never receives 304 during dynamic edits
+        if 'If-Modified-Since' in self.headers:
+            del self.headers['If-Modified-Since']
+        if 'If-None-Match' in self.headers:
+            del self.headers['If-None-Match']
+
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         params = urllib.parse.parse_qs(parsed.query)
@@ -229,6 +322,29 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             self.send_json({"status": "success", "project": project_id, "files": files})
             return
+
+        # Clean URL Routing for web pages
+        clean_path = path.strip('/')
+        if clean_path in ('', 'index'):
+            return self.serve_html_file('index.html')
+        if clean_path in ('projects', 'work'):
+            return self.serve_html_file('projects.html')
+        if clean_path == 'dashboard':
+            return self.serve_html_file('dashboard.html')
+        if clean_path == 'project-detail':
+            return self.serve_html_file('project-detail.html')
+
+        # Check if requested slug is a project ID
+        known_projects = ['becht', 'mitidja', 'noctael', 'vagdor', 'carilly', 'designsystem', 'pharma', 'delivery', 'asiancooks']
+        try:
+            cfg = read_projects_config()
+            if cfg:
+                known_projects = list(cfg.keys())
+        except Exception:
+            pass
+
+        if clean_path in known_projects:
+            return self.serve_html_file('project-detail.html')
 
         return super().do_GET()
 

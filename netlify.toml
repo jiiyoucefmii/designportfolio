@@ -1,0 +1,14 @@
+[[redirects]]
+  from = "/projects"
+  to = "/projects.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/:id"
+  to = "/project-detail.html?id=:id"
+  status = 200

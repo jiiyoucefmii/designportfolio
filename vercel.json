@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/:id", "destination": "/project-detail.html?id=:id" }
+  ]
+}

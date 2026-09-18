@@ -1,9 +1,71 @@
-/**
- * Modular Project Detail Renderer & Video Controller
- * BUILTBYJIMI
- */
-
 import { PROJECTS_DETAIL_DATA } from './project-detail-data.js';
+
+let currentProjectsData = { ...PROJECTS_DETAIL_DATA };
+
+function buildDetailDataFromConfig(configDict) {
+  const result = {};
+  const entries = Object.entries(configDict);
+  entries.forEach(([key, project], idx) => {
+    const nextKey = project.nextProjectId || (idx + 1 < entries.length ? entries[idx + 1][0] : entries[0][0]);
+    const nextProjectObj = configDict[nextKey] || entries[0][1];
+    result[key] = {
+      ...project,
+      nextProject: {
+        id: nextProjectObj.id,
+        title: nextProjectObj.title,
+        subtitle: nextProjectObj.subtitle,
+        cardImage: nextProjectObj.thumbnail
+      }
+    };
+  });
+  return result;
+}
+
+function resolveProjectId() {
+  // 1. Check URL query param: ?id=becht
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('id');
+  if (queryId && queryId.trim()) return queryId.trim().toLowerCase();
+
+  // 2. Check path slug backwards (e.g. /noctael or /noctael/ or /noctael/index.html)
+  const pathParts = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+  for (let i = pathParts.length - 1; i >= 0; i--) {
+    let seg = pathParts[i].replace(/\.html$/i, '').trim().toLowerCase();
+    if (seg && !['index', 'project-detail', 'projects', 'dashboard', 'work'].includes(seg)) {
+      return seg;
+    }
+  }
+
+  return 'becht';
+}
+
+async function loadLiveProjectData() {
+  // Check API if available with anti-cache query
+  try {
+    const res = await fetch(`/api/projects?_t=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.projects && Object.keys(data.projects).length > 0) {
+        currentProjectsData = buildDetailDataFromConfig(data.projects);
+        try {
+          localStorage.setItem('builtbyjimi_projects_cache', JSON.stringify(data.projects));
+        } catch (_) {}
+        return;
+      }
+    }
+  } catch (_) {}
+
+  // Fallback to local storage cache if available
+  try {
+    const cached = localStorage.getItem('builtbyjimi_projects_cache');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Object.keys(parsed).length > 0) {
+        currentProjectsData = buildDetailDataFromConfig(parsed);
+      }
+    }
+  } catch (_) {}
+}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
@@ -13,18 +75,25 @@ if (document.readyState === 'loading') {
   initProjectDetail();
 }
 
-function initProjectDetail() {
-  // 1. Resolve Project ID from URL query param
-  const urlParams = new URLSearchParams(window.location.search);
-  let projectId = urlParams.get('id');
+async function initProjectDetail() {
+  // Fetch live updates first
+  await loadLiveProjectData();
 
-  // Project detail is available if the project is marked isLive, or becht / asiancooks by default
-  const project = projectId ? PROJECTS_DETAIL_DATA[projectId] : null;
-  const isAllowed = project && (project.isLive || projectId === 'becht' || projectId === 'asiancooks');
+  // 1. Resolve Project ID from URL path or query
+  const projectId = resolveProjectId();
+  const project = currentProjectsData[projectId] || PROJECTS_DETAIL_DATA[projectId] || currentProjectsData['becht'] || PROJECTS_DETAIL_DATA['becht'];
 
-  if (!project || !isAllowed) {
-    window.location.replace('project-detail.html?id=becht');
+  if (!project) {
+    window.location.replace('/becht');
     return;
+  }
+
+  // Ensure clean URL in browser address bar (e.g. /becht instead of project-detail.html?id=becht)
+  const currentPath = window.location.pathname;
+  if (window.location.search.includes('id=') || currentPath.includes('project-detail.html')) {
+    try {
+      window.history.replaceState({ projectId }, '', `/${projectId}`);
+    } catch (_) {}
   }
 
   // 2. Set Page Title
@@ -64,6 +133,45 @@ function initProjectDetail() {
     }
   }, 1000);
 }
+
+// Live real-time sync with CMS Dashboard
+if (typeof BroadcastChannel !== 'undefined') {
+  const channel = new BroadcastChannel('builtbyjimi_cms');
+  channel.onmessage = async (event) => {
+    if (event.data && event.data.type === 'PROJECTS_UPDATED') {
+      console.log('[CMS Sync] Project update detected, re-rendering project detail...');
+      await loadLiveProjectData();
+      const projectId = resolveProjectId();
+      const updatedProject = currentProjectsData[projectId] || PROJECTS_DETAIL_DATA[projectId];
+      if (updatedProject) {
+        document.title = `${updatedProject.title} — BuiltByJimi`;
+        renderHero(updatedProject);
+        renderHeader(updatedProject);
+        renderAssetsStream(updatedProject);
+        renderNextProject(updatedProject);
+        initVideoControllers();
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      }
+    }
+  };
+}
+
+window.addEventListener('storage', async (e) => {
+  if (e.key === 'builtbyjimi_cms_updated' || e.key === 'builtbyjimi_projects_cache') {
+    await loadLiveProjectData();
+    const projectId = resolveProjectId();
+    const updatedProject = currentProjectsData[projectId] || PROJECTS_DETAIL_DATA[projectId];
+    if (updatedProject) {
+      document.title = `${updatedProject.title} — BuiltByJimi`;
+      renderHero(updatedProject);
+      renderHeader(updatedProject);
+      renderAssetsStream(updatedProject);
+      renderNextProject(updatedProject);
+      initVideoControllers();
+      if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    }
+  }
+});
 
 /**
  * 1. Render Fullscreen Hero Section (16px outer padding)
@@ -244,14 +352,15 @@ function renderAssetsStream(project) {
  * Render single asset element (Video or Image)
  */
 function renderSingleAssetMarkup(item, id) {
-  if (item.type === 'video') {
+  const isVid = item.type === 'video' || (item.src && (item.src.toLowerCase().endsWith('.mp4') || item.src.toLowerCase().endsWith('.webm')));
+  if (isVid) {
     const aspectStyle = item.aspect ? `style="aspect-ratio: ${item.aspect};"` : '';
     const aspectClass = (item.aspect === '1/1' || item.aspect === '1:1') ? 'aspect-1-1' : '';
     return `
       <div class="asset-card">
         <div class="asset-video-wrapper ${aspectClass}" ${aspectStyle}>
           ${item.src ? `
-            <video class="asset-video-element" autoplay loop muted playsinline poster="${item.poster || ''}">
+            <video class="asset-video-element" autoplay loop muted playsinline webkit-playsinline poster="${item.poster || ''}">
               <source src="${item.src}" type="video/mp4">
             </video>
           ` : `
@@ -283,7 +392,7 @@ function renderNextProject(project) {
   const teaserTitle = document.getElementById('nextTeaserTitle');
   const teaserSubtitle = document.getElementById('nextTeaserSubtitle');
 
-  const nextUrl = `./project-detail.html?id=${next.id}`;
+  const nextUrl = `/${next.id}`;
 
   const mediaSrc = project.pinBaseVideo || project.pinBaseImage || project.hero?.imageSrc || '';
   const isVideo = mediaSrc.toLowerCase().endsWith('.mp4') || project.pinBaseType === 'video';
@@ -385,7 +494,16 @@ function initNextProjectScrollPin() {
  * Video Autoplay & Viewport IntersectionObserver (Continuous Loop, No Controls)
  */
 function initVideoControllers() {
-  const videos = document.querySelectorAll('.asset-video-element');
+  const videos = document.querySelectorAll('video');
+
+  videos.forEach(video => {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.play().catch(() => {});
+  });
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -396,7 +514,7 @@ function initVideoControllers() {
         video.pause();
       }
     });
-  }, { threshold: 0.25 });
+  }, { threshold: 0.15 });
 
   videos.forEach(video => {
     observer.observe(video);

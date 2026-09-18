@@ -29,7 +29,7 @@ export const PROJECTS_CONFIG = {
       "type": "image",
       "bg": "#212121",
       "imageSrc": "assets/projects/assets/becht/THUMBnail.png",
-      "title": "ALFRED\nBECHT"
+      "title": "ALFREDBECHT"
     },
     "narrative": {
       "subheading": "Precision Design for a Specialized Market",
@@ -100,20 +100,20 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/becht/THUMBnail.png",
-    "nextProjectId": "asiancooks",
+    "nextProjectId": "mitidja",
     "isLive": true
   },
   "mitidja": {
     "id": "mitidja",
     "number": "02",
-    "title": "Mitidja",
+    "title": "Mitidja Charcuterie",
     "subtitle": "Reviving a Legacy Through Design",
     "industry": "HERITAGE FOOD & CHARCUTERIE",
     "year": "2024",
     "categories": [
       "branding"
     ],
-    "thumbnail": "assets/projects/thumbnails/mitidja.png",
+    "thumbnail": "assets/projects/assets/mitidja/logomitidja.png",
     "summary": "Revitalizing a legacy Algerian charcuterie brand through a modernized visual identity, product catalogue, tri-fold brochures, flyers, and business stationery.",
     "services": [
       "BRANDING",
@@ -123,11 +123,11 @@ export const PROJECTS_CONFIG = {
       "PRINT & RETAIL"
     ],
     "hero": {
-      "type": "brand_graphic",
-      "bg": "#1e1e1e",
+      "type": "image",
+      "bg": "#e8e8e8",
       "textColor": "#d4af37",
-      "title": "MITIDJA\nHERITAGE",
-      "imageSrc": "assets/projects/assets/mitidja/logomitidja.png"
+      "title": "MITIDJA CHARCUTERIE",
+      "imageSrc": "assets/projects/assets/mitidja/THUMBnail.png"
     },
     "narrative": {
       "subheading": "Reviving a Legacy Through Design",
@@ -154,42 +154,46 @@ export const PROJECTS_CONFIG = {
       {
         "layout": "1-col",
         "type": "image",
-        "src": "assets/projects/assets/mitidja/cartevisite.png",
-        "alt": "Mitidja Business Card Stationery System"
+        "src": "assets/projects/assets/mitidja/face -A5.png",
+        "alt": "face -A5"
+      },
+      {
+        "layout": "1-col",
+        "type": "image",
+        "src": "assets/projects/assets/mitidja/back -A5.png",
+        "alt": "back -A5"
       },
       {
         "layout": "2-col",
         "items": [
           {
             "type": "image",
-            "src": "assets/projects/assets/mitidja/face -A5.png",
-            "alt": "Mitidja Flyer Front Design"
+            "src": "assets/projects/assets/mitidja/2cmetijal11.png",
+            "alt": "2cmetijal11"
           },
           {
             "type": "image",
-            "src": "assets/projects/assets/mitidja/back -A5.png",
-            "alt": "Mitidja Flyer Back Design"
+            "src": "assets/projects/assets/mitidja/2cmetija.png",
+            "alt": "2cmetija"
           }
         ]
       },
       {
-        "layout": "2-col",
-        "items": [
-          {
-            "type": "image",
-            "src": "assets/projects/assets/mitidja/face.png",
-            "alt": "Mitidja Tri-Fold Brochure Face"
-          },
-          {
-            "type": "image",
-            "src": "assets/projects/assets/mitidja/back.png",
-            "alt": "Mitidja Tri-Fold Brochure Back"
-          }
-        ]
+        "layout": "1-col",
+        "type": "image",
+        "src": "assets/projects/assets/mitidja/face.png",
+        "alt": "face"
+      },
+      {
+        "layout": "1-col",
+        "type": "image",
+        "src": "assets/projects/assets/mitidja/back.png",
+        "alt": "back"
       }
     ],
-    "pinBaseImage": "assets/projects/assets/mitidja/cartevisite.png",
-    "nextProjectId": "noctael"
+    "pinBaseImage": "assets/projects/assets/mitidja/THUMBnail.png",
+    "nextProjectId": "noctael",
+    "isLive": true
   },
   "noctael": {
     "id": "noctael",
@@ -245,25 +249,55 @@ export const PROJECTS_CONFIG = {
         "items": [
           {
             "type": "image",
-            "src": "assets/projects/assets/noctael/2cNoctael-1.png",
-            "alt": "Noctael 3D Model 3"
+            "src": "assets/projects/assets/noctael/2cNoctael11.png",
+            "alt": "2cNoctael11"
           },
+          {
+            "type": "image",
+            "src": "assets/projects/assets/noctael/2cNoctael22.png",
+            "alt": "2cNoctael22"
+          }
+        ]
+      },
+      {
+        "layout": "2-col",
+        "items": [
           {
             "type": "image",
             "src": "assets/projects/assets/noctael/2cNoctael.png",
             "alt": "Noctael 3D Model 4"
+          },
+          {
+            "type": "image",
+            "src": "assets/projects/assets/noctael/2cNoctael-1.png",
+            "alt": "Noctael 3D Model 3"
+          }
+        ]
+      },
+      {
+        "layout": "2-col",
+        "items": [
+          {
+            "type": "image",
+            "src": "assets/projects/assets/noctael/2cNoctael-2.png",
+            "alt": "2cNoctael-2"
+          },
+          {
+            "type": "image",
+            "src": "assets/projects/assets/noctael/2cNoctael-3.png",
+            "alt": "2cNoctael-3"
           }
         ]
       },
       {
         "layout": "1-col",
         "type": "video",
-        "src": "assets/projects/assets/noctael/Scene-1 (1) (1).mp4",
-        "alt": "Scene-1 (1) (1)"
+        "src": "assets/projects/assets/noctael/1cvidnoctael.mp4",
+        "alt": "1cvidnoctael"
       }
     ],
-    "pinBaseImage": "assets/projects/assets/noctael/tthumbnail.png",
-    "nextProjectId": "vagdor",
+    "pinBaseImage": "assets/projects/assets/noctael/1cnoctqel.png",
+    "nextProjectId": "asiancooks",
     "isLive": true
   },
   "vagdor": {
@@ -276,7 +310,7 @@ export const PROJECTS_CONFIG = {
     "categories": [
       "branding"
     ],
-    "thumbnail": "assets/projects/thumbnails/vagdor.png",
+    "thumbnail": "assets/projects/assets/vagdor/vagdorlogo.png",
     "summary": "Developing packaging iterations and flavor extension systems for a classic Algerian chips brand, balancing brand continuity with modern shelf appeal.",
     "services": [
       "BRAND EXTENSION",
@@ -286,10 +320,10 @@ export const PROJECTS_CONFIG = {
       "CLIENT COLLABORATION"
     ],
     "hero": {
-      "type": "brand_graphic",
-      "bg": "#1c1402",
+      "type": "image",
+      "bg": "#bb1a0f",
       "textColor": "#f4c430",
-      "title": "VAG D'OR\nFLAVORS",
+      "title": "VAG D'OR CHIPS",
       "imageSrc": "assets/projects/assets/vagdor/vagdorlogo.png"
     },
     "narrative": {
@@ -355,8 +389,9 @@ export const PROJECTS_CONFIG = {
         ]
       }
     ],
-    "pinBaseImage": "assets/projects/assets/vagdor/chips-bag-mockup.png",
-    "nextProjectId": "carilly"
+    "pinBaseImage": "assets/projects/assets/vagdor/vagdorlogo.png",
+    "nextProjectId": "carilly",
+    "isLive": false
   },
   "carilly": {
     "id": "carilly",
@@ -406,12 +441,13 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/carilly/carilly.png",
-    "nextProjectId": "designsystem"
+    "nextProjectId": "designsystem",
+    "isLive": false
   },
   "designsystem": {
     "id": "designsystem",
     "number": "06",
-    "title": "Enterprise Design System",
+    "title": "Travel Platform",
     "subtitle": "Scalable Component Architecture",
     "industry": "SAAS & ENTERPRISE SOFTWARE",
     "year": "2024",
@@ -419,7 +455,7 @@ export const PROJECTS_CONFIG = {
       "digital-design"
     ],
     "thumbnail": "assets/projects/thumbnails/designsystem.png",
-    "summary": "A multi-platform enterprise design system bridging Figma tokens and production components for consistent, accessible digital product development.",
+    "summary": "A multi-platform design system bridging Figma tokens and production components for consistent, accessible digital product development.",
     "services": [
       "DESIGN SYSTEMS",
       "COMPONENT LIBRARY",
@@ -430,7 +466,7 @@ export const PROJECTS_CONFIG = {
       "type": "image",
       "bg": "#161616",
       "imageSrc": "assets/projects/assets/designsystem/designsystem.png",
-      "title": "DESIGN\nSYSTEM"
+      "title": "DESIGNSYSTEM"
     },
     "narrative": {
       "subheading": "A Unified Visual Language",
@@ -456,12 +492,13 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/designsystem/designsystem.png",
-    "nextProjectId": "pharma"
+    "nextProjectId": "pharma",
+    "isLive": false
   },
   "pharma": {
     "id": "pharma",
     "number": "07",
-    "title": "PharmaTech",
+    "title": "Pharma",
     "subtitle": "Clinical Pharmacy Management",
     "industry": "HEALTHCARE & PHARMACEUTICAL",
     "year": "2024",
@@ -480,7 +517,7 @@ export const PROJECTS_CONFIG = {
       "type": "image",
       "bg": "#0d1b2a",
       "imageSrc": "assets/projects/assets/pharma/pharma.png",
-      "title": "PHARMATECH\nPORTAL"
+      "title": "PHARMATECHPORTAL"
     },
     "narrative": {
       "subheading": "Clinical Management at Scale",
@@ -521,12 +558,13 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/pharma/pharma.png",
-    "nextProjectId": "delivery"
+    "nextProjectId": "delivery",
+    "isLive": false
   },
   "delivery": {
     "id": "delivery",
     "number": "08",
-    "title": "Express Delivery",
+    "title": "Pharma Delivery",
     "subtitle": "Courier Dispatch & Tracking Architecture",
     "industry": "LOGISTICS & ON-DEMAND DELIVERY",
     "year": "2024",
@@ -534,7 +572,7 @@ export const PROJECTS_CONFIG = {
       "digital-design"
     ],
     "thumbnail": "assets/projects/thumbnails/delivery.png",
-    "summary": "Urban courier dispatch and live telemetry tracking platform uniting fleet operators, couriers, and recipients.",
+    "summary": "Pharma courier dispatch and live telemetry tracking platform uniting fleet operators, couriers, and recipients.",
     "services": [
       "DISPATCH UI",
       "MOBILE APP",
@@ -545,7 +583,7 @@ export const PROJECTS_CONFIG = {
       "type": "image",
       "bg": "#1a1a1a",
       "imageSrc": "assets/projects/assets/delivery/delivery.png",
-      "title": "EXPRESS\nDELIVERY"
+      "title": "EXPRESSDELIVERY"
     },
     "narrative": {
       "subheading": "Intelligent Courier Dispatch",
@@ -571,7 +609,8 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/delivery/delivery.png",
-    "nextProjectId": "asiancooks"
+    "nextProjectId": "asiancooks",
+    "isLive": false
   },
   "asiancooks": {
     "id": "asiancooks",
@@ -598,7 +637,7 @@ export const PROJECTS_CONFIG = {
       "type": "image",
       "bg": "#C84B29",
       "imageSrc": "assets/projects/assets/asiancooks/1casiancooks3.png",
-      "title": "ASIAN\nCOOKS"
+      "title": "ASIANCOOKS"
     },
     "narrative": {
       "subheading": "Authentic Indian Snacks, Made for Real Moments",
@@ -680,7 +719,8 @@ export const PROJECTS_CONFIG = {
     ],
     "pinBaseImage": "assets/projects/assets/asiancooks/lastassetasianfoods.mp4",
     "pinBaseVideo": "assets/projects/assets/asiancooks/lastassetasianfoods.mp4",
-    "nextProjectId": "noctael"
+    "nextProjectId": "becht",
+    "isLive": true
   }
 };
 
@@ -697,9 +737,8 @@ export function getProjectsList() {
     role: p.services ? p.services.slice(0, 3).join(' | ') : '',
     categories: p.categories || [],
     image: p.thumbnail,
-    description: p.summary,
-    isLive: Boolean(p.isLive || p.id === 'becht' || p.id === 'asiancooks'),
-    link: (p.isLive || p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${p.id}` : null
+    isLive: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')),
+    link: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')) ? `/${p.id}` : null
   }));
 }
 

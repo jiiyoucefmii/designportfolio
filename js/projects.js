@@ -1,7 +1,8 @@
 /**
  * BUILTBYJIMI - PROJECTS PAGE CONTROLLER
- * Infinite seamlessly looping carousel across all projects (no bounds),
- * with touch/swipe, wheel, keyboard navigation, filter tabs, and detail modal.
+ * Ultra-smooth, truly infinite continuous scroll carousel across all projects (no bounds),
+ * with touch/swipe drag, continuous mouse wheel / trackpad scrolling, momentum fling,
+ * auto-snap, keyboard navigation, category filter tabs, and detail modal.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,91 +21,240 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalDesc = document.getElementById('modalDesc');
   const modalLink = document.getElementById('modalLink');
 
-  let activeFilter = null; // null = no category filter, shows all projects
-  let filteredList = [...PROJECTS_DATA];
-  let currentIndex = 0;
-  let isAnimating = false;
+  let allProjectsList = (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA)) ? [...PROJECTS_DATA] : [];
+  let activeFilter = null; // null = all projects
+  let filteredList = [...allProjectsList];
+
+  // Carousel positioning & physics
+  let currentX = 0;
+  let targetX = 0;
+  let singleSetWidth = 0;
+  let centerAnchor = 0;
+  let rafId = null;
+  let activeCard = null;
+  let isSnapping = false;
 
   // Pointer drag state
-  let isDragging = false;
-  let startX = 0;
-  let currentX = 0;
-  let startOffset = 0;
-  let hasMoved = false;
+  let isPointerDown = false;
+  let hasDragged = false;
+  let dragStartX = 0;
+  let lastPointerX = 0;
 
-  // Calculate target translate offset to center a card
-  function getTargetOffset(idx) {
-    const cards = track.querySelectorAll('.project-card');
-    const targetCard = cards[idx];
-    if (!targetCard) return 0;
-    const viewportWidth = viewport.offsetWidth;
-    const cardLeft = targetCard.offsetLeft;
-    const cardWidth = targetCard.offsetWidth;
-    return (viewportWidth / 2) - (cardLeft + cardWidth / 2);
-  }
-
-  // Update active class on cards
-  function updateActiveClasses(targetIdx) {
-    const cards = track.querySelectorAll('.project-card');
-    cards.forEach((card, idx) => {
-      card.classList.toggle('active', idx === targetIdx);
+  function buildListFromConfig(configDict) {
+    return Object.values(configDict).map(p => {
+      const isLive = Boolean(p.isLive !== false);
+      return {
+        id: p.id,
+        number: p.number || '01',
+        title: p.title || '',
+        subtitle: p.subtitle || '',
+        industry: p.industry || '',
+        role: p.services ? p.services.slice(0, 3).join(' | ') : '',
+        categories: p.categories || [],
+        image: p.thumbnail || '',
+        description: p.summary || '',
+        isLive: isLive,
+        link: isLive ? `/${p.id}` : null
+      };
     });
   }
 
-  // Go to a specific index (instant or animated)
-  function goToIndex(targetIdx, animate = true) {
-    const cards = track.querySelectorAll('.project-card');
-    if (cards.length === 0) return;
+  async function syncLiveProjects() {
+    try {
+      const res = await fetch(`/api/projects?_t=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.projects && Object.keys(data.projects).length > 0) {
+          allProjectsList = buildListFromConfig(data.projects);
+          applyFilter(false);
+          try {
+            localStorage.setItem('builtbyjimi_projects_cache', JSON.stringify(data.projects));
+          } catch (_) {}
+          return;
+        }
+      }
+    } catch (_) {}
 
-    currentIndex = targetIdx;
-    updateActiveClasses(currentIndex);
+    try {
+      const cached = localStorage.getItem('builtbyjimi_projects_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Object.keys(parsed).length > 0) {
+          allProjectsList = buildListFromConfig(parsed);
+          applyFilter(false);
+        }
+      }
+    } catch (_) {}
+  }
 
-    const targetOffset = getTargetOffset(currentIndex);
+  function applyFilter(resetPosition = true) {
+    if (!activeFilter) {
+      filteredList = [...allProjectsList];
+    } else {
+      filteredList = allProjectsList.filter((p) => p.categories && p.categories.includes(activeFilter));
+    }
+    renderCards(resetPosition);
+  }
 
-    if (!animate) {
-      track.style.transition = 'none';
-      track.style.transform = `translateX(${targetOffset}px)`;
-      void track.offsetWidth; // force reflow
+  /* --------------------------------------------------------------------------
+     GEOMETRY & INFINITE MODULO WRAPPING
+     -------------------------------------------------------------------------- */
+  function measureSetWidth() {
+    const N = filteredList.length;
+    if (N <= 1) {
+      singleSetWidth = 0;
+      centerAnchor = 0;
       return;
     }
 
-    isAnimating = true;
-    track.style.transition = 'transform 0.52s cubic-bezier(0.16, 1, 0.3, 1)';
-    track.style.transform = `translateX(${targetOffset}px)`;
+    const cards = track.querySelectorAll('.project-card');
+    if (cards.length < 3 * N) return;
+
+    const cardA = cards[2 * N];
+    const cardB = cards[3 * N];
+
+    if (cardA && cardB) {
+      singleSetWidth = cardB.offsetLeft - cardA.offsetLeft;
+      const viewportCenter = viewport.offsetWidth / 2;
+      const cardCenter = cardA.offsetLeft + cardA.offsetWidth / 2;
+      centerAnchor = viewportCenter - cardCenter;
+    }
+  }
+
+  // Wraps currentX and targetX seamlessly by singleSetWidth so it loops perpetually
+  function wrapOffset() {
+    if (singleSetWidth <= 0 || filteredList.length <= 1) return;
+
+    const halfSet = singleSetWidth / 2;
+    const minX = centerAnchor - singleSetWidth - halfSet;
+    const maxX = centerAnchor + halfSet;
+
+    while (currentX < minX) {
+      currentX += singleSetWidth;
+      targetX += singleSetWidth;
+    }
+    while (currentX > maxX) {
+      currentX -= singleSetWidth;
+      targetX -= singleSetWidth;
+    }
+  }
+
+  function updateActiveCard() {
+    const cards = track.querySelectorAll('.project-card');
+    if (cards.length === 0) return;
+
+    const viewportCenterTrack = (viewport.offsetWidth / 2) - currentX;
+    let closestCard = null;
+    let minDistance = Infinity;
+
+    cards.forEach((card) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const dist = Math.abs(cardCenter - viewportCenterTrack);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestCard = card;
+      }
+    });
+
+    if (closestCard && closestCard !== activeCard) {
+      if (activeCard) activeCard.classList.remove('active');
+      closestCard.classList.add('active');
+      activeCard = closestCard;
+    }
+  }
+
+  function applyTransform() {
+    track.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`;
+  }
+
+  /* --------------------------------------------------------------------------
+     ANIMATION LOOP (RAF Physics & Damping)
+     -------------------------------------------------------------------------- */
+  function tick() {
+    const dist = targetX - currentX;
+    if (Math.abs(dist) > 0.4) {
+      currentX += dist * (isSnapping ? 0.15 : 0.18);
+      wrapOffset();
+      applyTransform();
+      updateActiveCard();
+      rafId = requestAnimationFrame(tick);
+    } else {
+      currentX = targetX;
+      wrapOffset();
+      applyTransform();
+      updateActiveCard();
+      isSnapping = false;
+      rafId = null;
+    }
+  }
+
+  function startAnimation() {
+    if (!rafId) {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function snapToNearestCard() {
+    const cards = track.querySelectorAll('.project-card');
+    if (cards.length === 0) return;
+
+    const viewportCenterTrack = (viewport.offsetWidth / 2) - targetX;
+    let closestCard = null;
+    let minDistance = Infinity;
+
+    cards.forEach((card) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const dist = Math.abs(cardCenter - viewportCenterTrack);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestCard = card;
+      }
+    });
+
+    if (closestCard) {
+      isSnapping = true;
+      targetX = (viewport.offsetWidth / 2) - (closestCard.offsetLeft + closestCard.offsetWidth / 2);
+      startAnimation();
+    }
+  }
+
+  function snapToCard(card) {
+    if (!card) return;
+    isSnapping = true;
+    targetX = (viewport.offsetWidth / 2) - (card.offsetLeft + card.offsetWidth / 2);
+    startAnimation();
   }
 
   function goToNext() {
-    goToIndex(currentIndex + 1, true);
+    if (!activeCard) snapToNearestCard();
+    const next = activeCard ? activeCard.nextElementSibling : null;
+    if (next && next.classList.contains('project-card')) {
+      snapToCard(next);
+    } else {
+      snapToNearestCard();
+    }
   }
 
   function goToPrev() {
-    goToIndex(currentIndex - 1, true);
+    if (!activeCard) snapToNearestCard();
+    const prev = activeCard ? activeCard.previousElementSibling : null;
+    if (prev && prev.classList.contains('project-card')) {
+      snapToCard(prev);
+    } else {
+      snapToNearestCard();
+    }
   }
 
-  // Seamless boundary wrap when transition finishes
-  track.addEventListener('transitionend', (e) => {
-    if (e.target !== track) return;
-    isAnimating = false;
-    const N = filteredList.length;
-    if (N <= 1) return;
-
-    // If we scrolled past middle set into Copy 2 (idx >= 2 * N)
-    if (currentIndex >= 2 * N) {
-      currentIndex = currentIndex - N;
-      goToIndex(currentIndex, false); // instantaneous jump to identical item in Copy 1
+  /* --------------------------------------------------------------------------
+     RENDER 5 VIRTUAL SETS FOR UNBROKEN INFINITE SCROLL
+     -------------------------------------------------------------------------- */
+  function renderCards(resetPosition = true) {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
     }
-    // If we scrolled before middle set into Copy 0 (idx < N)
-    else if (currentIndex < N) {
-      currentIndex = currentIndex + N;
-      goToIndex(currentIndex, false); // instantaneous jump to identical item in Copy 1
-    }
-  });
-
-  // Render cards into track with 3 infinite loop copies
-  function renderCards() {
-    track.style.transition = 'none';
-    track.style.transform = 'none';
     track.innerHTML = '';
+    activeCard = null;
 
     if (filteredList.length === 0) {
       track.innerHTML = '<div style="padding: 60px; text-align: center; color: #888;">No projects found in this category.</div>';
@@ -112,20 +262,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const N = filteredList.length;
-    // For infinite wrap, duplicate 3 sets if more than 1 item
-    const repeatCount = N > 1 ? 3 : 1;
+    const repeatCount = N > 1 ? 5 : 1;
     let cardGlobalIndex = 0;
 
     for (let set = 0; set < repeatCount; set++) {
       filteredList.forEach((proj, realIdx) => {
         const thisCardIndex = cardGlobalIndex;
         const isAvailable = Boolean(proj.link || proj.isLive || proj.id === 'becht' || proj.id === 'asiancooks');
+        const cleanHref = `/${proj.id}`;
         const card = document.createElement(isAvailable ? 'a' : 'div');
         card.className = `project-card ${isAvailable ? '' : 'is-unavailable'}`.trim();
         if (isAvailable) {
-          card.href = proj.link || `project-detail.html?id=${proj.id}`;
+          card.href = cleanHref;
         }
-        card.setAttribute('data-index', thisCardIndex);
+        card.setAttribute('data-global-index', thisCardIndex);
         card.setAttribute('data-real-index', realIdx);
         card.setAttribute('data-id', proj.id);
         card.setAttribute('aria-label', `${proj.title} — ${proj.subtitle || proj.industry}`);
@@ -157,24 +307,39 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
 
-        // When thumbnail image loads, refresh carousel centering so variable card width is accounted for
+        // When image loads, recalculate set width and keep active card centered
         const img = card.querySelector('.card-media-img');
         if (img) {
           img.addEventListener('load', () => {
-            if (!isDragging && !isAnimating) {
-              goToIndex(currentIndex, false);
+            measureSetWidth();
+            if (activeCard && !hasDragged && !isSnapping) {
+              currentX = (viewport.offsetWidth / 2) - (activeCard.offsetLeft + activeCard.offsetWidth / 2);
+              targetX = currentX;
+              applyTransform();
+              updateActiveCard();
             }
           });
         }
 
-        // Click handler: if user dragged or project is unavailable, prevent navigation
+        // Card Click Handler
         card.addEventListener('click', (e) => {
-          if (hasMoved || !isAvailable) {
+          if (hasDragged) {
             e.preventDefault();
             e.stopPropagation();
             return;
           }
-          // Normal click allows native browser navigation to card.href
+
+          if (card !== activeCard) {
+            e.preventDefault();
+            e.stopPropagation();
+            snapToCard(card);
+            return;
+          }
+
+          if (!isAvailable) {
+            e.preventDefault();
+            openModal(proj);
+          }
         });
 
         track.appendChild(card);
@@ -182,91 +347,109 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Start in the middle set (Copy 1) at offset 0
-    currentIndex = N > 1 ? N : 0;
-    updateActiveClasses(currentIndex);
-
-    // Force layout reflow with transform: none so all cards have accurate rendered dimensions and offsetLeft
     void track.offsetWidth;
+    measureSetWidth();
 
-    // Center the active card
-    const targetOffset = getTargetOffset(currentIndex);
-    track.style.transform = `translateX(${targetOffset}px)`;
+    // Center on project 0 of middle set (Set 2)
+    const startIndex = N > 1 ? 2 * N : 0;
+    const startCard = track.children[startIndex];
+    if (startCard) {
+      if (activeCard) activeCard.classList.remove('active');
+      activeCard = startCard;
+      activeCard.classList.add('active');
+      currentX = (viewport.offsetWidth / 2) - (startCard.offsetLeft + startCard.offsetWidth / 2);
+      targetX = currentX;
+      applyTransform();
+      updateActiveCard();
+    }
   }
 
-  // Pointer drag events for desktop, tablet, and mobile
+  /* --------------------------------------------------------------------------
+     INPUT CONTROLS: PINCH SCROLL SWITCH, TOUCH/POINTER DRAG, KEYBOARD
+     -------------------------------------------------------------------------- */
+  // Scrolling just a pinch automatically switches to adjacent card with respect to direction
+  let isWheelThrottled = false;
+  let wheelAccumulator = 0;
+  let wheelResetTimer = null;
+
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (filteredList.length <= 1) return;
+    if (isWheelThrottled) return;
+
+    // Detect direction from either vertical (deltaY) or horizontal (deltaX) scroll
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    wheelAccumulator += delta;
+
+    // Threshold: just a pinch (6px of delta) switches immediately
+    if (Math.abs(wheelAccumulator) >= 6) {
+      isWheelThrottled = true;
+      if (wheelAccumulator > 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+      wheelAccumulator = 0;
+
+      // 360ms cooldown lets the adjacent card smoothly slide and center before next pinch
+      setTimeout(() => {
+        isWheelThrottled = false;
+        wheelAccumulator = 0;
+      }, 360);
+    } else {
+      clearTimeout(wheelResetTimer);
+      wheelResetTimer = setTimeout(() => {
+        wheelAccumulator = 0;
+      }, 140);
+    }
+  }, { passive: false });
+
+  // Direct Pointer / Touch Swipe
   viewport.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
-    isDragging = true;
-    hasMoved = false;
-    startX = e.clientX;
-    currentX = e.clientX;
-    startOffset = getTargetOffset(currentIndex);
-    track.style.transition = 'none';
+    if (filteredList.length <= 1) return;
+
+    isPointerDown = true;
+    hasDragged = false;
+    dragStartX = e.clientX;
+    lastPointerX = e.clientX;
   });
 
   window.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    currentX = e.clientX;
-    const deltaX = currentX - startX;
-    if (Math.abs(deltaX) > 8) {
-      hasMoved = true;
+    if (!isPointerDown) return;
+    const diff = e.clientX - dragStartX;
+    if (Math.abs(diff) > 10) {
+      hasDragged = true;
       viewport.classList.add('is-dragging');
-    }
-    if (hasMoved) {
-      track.style.transform = `translateX(${startOffset + deltaX}px)`;
     }
   });
 
   window.addEventListener('pointerup', (e) => {
-    if (!isDragging) return;
-    isDragging = false;
+    if (!isPointerDown) return;
+    isPointerDown = false;
     viewport.classList.remove('is-dragging');
 
-    if (hasMoved) {
-      const deltaX = currentX - startX;
-      const threshold = 45;
-
-      if (deltaX < -threshold) {
+    if (hasDragged) {
+      const diff = e.clientX - dragStartX;
+      // Light pinch swipe (24px) switches to adjacent card in direction of gesture
+      if (diff < -24) {
         goToNext();
-      } else if (deltaX > threshold) {
+      } else if (diff > 24) {
         goToPrev();
-      } else {
-        // Snap back smoothly
-        goToIndex(currentIndex, true);
       }
+      setTimeout(() => {
+        hasDragged = false;
+      }, 60);
     }
   });
 
   window.addEventListener('pointercancel', () => {
-    if (!isDragging) return;
-    isDragging = false;
+    isPointerDown = false;
+    hasDragged = false;
     viewport.classList.remove('is-dragging');
-    if (hasMoved) {
-      goToIndex(currentIndex, true);
-    }
   });
 
-  // Mouse wheel horizontal scroll conversion
-  let wheelCooldown = false;
-  viewport.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    if (wheelCooldown) return;
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (Math.abs(delta) > 15) {
-      wheelCooldown = true;
-      if (delta > 0) {
-        goToNext();
-      } else {
-        goToPrev();
-      }
-      setTimeout(() => {
-        wheelCooldown = false;
-      }, 260);
-    }
-  }, { passive: false });
-
-  // Keyboard navigation
+  // Keyboard Navigation
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
@@ -275,8 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       goToPrev();
     } else if (e.key === 'Enter') {
-      const cards = track.querySelectorAll('.project-card');
-      const activeCard = cards[currentIndex];
       if (activeCard && activeCard.tagName.toLowerCase() === 'a') {
         const href = activeCard.getAttribute('href');
         if (href) window.location.href = href;
@@ -284,20 +465,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Filter tabs handling
+  // Filter Tabs
   filterTabs.forEach((tab) => {
     tab.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
 
       const filter = tab.getAttribute('data-filter');
-
-      if (filter === activeFilter) {
-        // Toggle off - deselect filter
-        activeFilter = null;
-      } else {
-        activeFilter = filter;
-      }
+      activeFilter = (filter === activeFilter) ? null : filter;
 
       filterTabs.forEach((t) => {
         const isSelected = t.getAttribute('data-filter') === activeFilter;
@@ -305,13 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         t.setAttribute('aria-selected', isSelected ? 'true' : 'false');
       });
 
-      if (!activeFilter) {
-        filteredList = [...PROJECTS_DATA];
-      } else {
-        filteredList = PROJECTS_DATA.filter((p) => p.categories && p.categories.includes(activeFilter));
-      }
-
-      renderCards();
+      applyFilter(true);
     });
   });
 
@@ -325,9 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modalIndustry.textContent = proj.industry;
     modalRole.textContent = proj.role;
     modalDesc.textContent = proj.description;
-    const isAvailable = proj.id === 'becht' || proj.id === 'asiancooks';
+    const isAvailable = Boolean(proj.link || proj.isLive || proj.id === 'becht' || proj.id === 'asiancooks');
     if (isAvailable) {
-      modalLink.href = `project-detail.html?id=${proj.id}`;
+      modalLink.href = `/${proj.id}`;
       modalLink.textContent = "Open Case Study →";
       modalLink.style.display = 'inline-flex';
     } else {
@@ -348,16 +517,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === modalOverlay) closeModal();
   });
 
-  // Responsive window resize
+  // Responsive resize
   window.addEventListener('resize', () => {
-    goToIndex(currentIndex, false);
+    measureSetWidth();
+    if (activeCard) {
+      snapToCard(activeCard);
+    } else {
+      snapToNearestCard();
+    }
   });
 
-  // Re-center when all window resources (including cached/decoded images) finish loading
-  window.addEventListener('load', () => {
-    goToIndex(currentIndex, false);
-  });
+  // Load & sync initial cards
+  renderCards(true);
+  syncLiveProjects();
 
-  // Initial render
-  renderCards();
+  // Real-time broadcast sync from CMS Dashboard
+  if (typeof BroadcastChannel !== 'undefined') {
+    const channel = new BroadcastChannel('builtbyjimi_cms');
+    channel.onmessage = async (event) => {
+      if (event.data && event.data.type === 'PROJECTS_UPDATED') {
+        console.log('[CMS Sync] Received project update broadcast in gallery, re-syncing...');
+        await syncLiveProjects();
+      }
+    };
+  }
+
+  window.addEventListener('storage', async (e) => {
+    if (e.key === 'builtbyjimi_cms_updated' || e.key === 'builtbyjimi_projects_cache') {
+      await syncLiveProjects();
+    }
+  });
 });
+
