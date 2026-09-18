@@ -46,7 +46,7 @@ const PROJECTS_DATA = [
     "subtitle": "From Concept to Launch",
     "image": "assets/projects/thumbnails/noctael.jpg",
     "description": "From initial naming to 3D drop visualization and cinematic reels, a nocturnal minimalist streetwear brand identity brought to life in digital and physical forms.",
-    "link": null
+    "link": "project-detail.html?id=noctael"
   },
   {
     "id": "vagdor",

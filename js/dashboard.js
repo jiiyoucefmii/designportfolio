@@ -116,6 +116,8 @@ class DashboardController {
     this.toggleLiveDetail.addEventListener('change', (e) => {
       this.currentProject.isLive = e.target.checked;
       this.updateLiveBadges();
+      this.renderSidebar(this.projectSearchInput.value);
+      this.showToast(e.target.checked ? 'Project marked as LIVE DETAIL. Hit "Save Changes" (Ctrl+S) to publish.' : 'Project set to CARD ONLY. Hit "Save Changes" (Ctrl+S) to apply.');
     });
 
     // Hero Live Controls
@@ -388,7 +390,12 @@ class DashboardController {
   }
 
   updateLiveBadges() {
-    const isLive = (this.currentId === 'becht' || this.currentId === 'asiancooks' || this.currentProject.isLive);
+    const isLive = Boolean(
+      this.currentProject.isLive !== undefined
+        ? this.currentProject.isLive
+        : (this.currentId === 'becht' || this.currentId === 'asiancooks')
+    );
+    this.currentProject.isLive = isLive;
     this.toggleLiveDetail.checked = isLive;
     if (isLive) {
       this.topbarLiveBadge.className = 'nav-item-badge badge-live';
@@ -407,7 +414,7 @@ class DashboardController {
       const match = !query || p.title.toLowerCase().includes(query) || (p.industry && p.industry.toLowerCase().includes(query));
       if (!match) return;
 
-      const isLive = (id === 'becht' || id === 'asiancooks' || p.isLive);
+      const isLive = Boolean(p.isLive !== undefined ? p.isLive : (id === 'becht' || id === 'asiancooks'));
       const item = document.createElement('div');
       item.className = `project-nav-item ${id === this.currentId ? 'active' : ''}`;
       item.dataset.id = id;

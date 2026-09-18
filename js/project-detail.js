@@ -18,9 +18,11 @@ function initProjectDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   let projectId = urlParams.get('id');
 
-  // Project detail is only available currently for becht and asiancooks
-  const allowedProjects = ['becht', 'asiancooks'];
-  if (!projectId || !allowedProjects.includes(projectId) || !PROJECTS_DETAIL_DATA[projectId]) {
+  // Project detail is available if the project is marked isLive, or becht / asiancooks by default
+  const project = projectId ? PROJECTS_DETAIL_DATA[projectId] : null;
+  const isAllowed = project && (project.isLive || projectId === 'becht' || projectId === 'asiancooks');
+
+  if (!project || !isAllowed) {
     window.location.replace('project-detail.html?id=becht');
     return;
   }

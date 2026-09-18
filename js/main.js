@@ -299,4 +299,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Dynamic Work Cards Clickability Sync from PROJECTS_DATA
+  if (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA)) {
+    document.querySelectorAll('.work-card[data-project-id]').forEach((card) => {
+      const id = card.getAttribute('data-project-id');
+      const proj = PROJECTS_DATA.find((p) => p.id === id);
+      const isLive = proj && Boolean(proj.isLive || proj.link || id === 'becht' || id === 'asiancooks');
+      const currentInner = card.querySelector('.card-inner');
+      if (!currentInner) return;
+
+      if (isLive) {
+        if (currentInner.tagName !== 'A') {
+          const a = document.createElement('a');
+          a.className = 'card-inner';
+          a.href = (proj && proj.link) || `project-detail.html?id=${id}`;
+          a.innerHTML = currentInner.innerHTML;
+          currentInner.replaceWith(a);
+        } else {
+          currentInner.href = (proj && proj.link) || `project-detail.html?id=${id}`;
+          currentInner.classList.remove('is-non-clickable');
+        }
+      } else {
+        if (currentInner.tagName === 'A') {
+          const div = document.createElement('div');
+          div.className = 'card-inner is-non-clickable';
+          div.innerHTML = currentInner.innerHTML;
+          currentInner.replaceWith(div);
+        } else {
+          currentInner.classList.add('is-non-clickable');
+        }
+      }
+    });
+  }
 });

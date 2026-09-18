@@ -214,8 +214,8 @@ export const PROJECTS_CONFIG = {
       "type": "brand_graphic",
       "bg": "#0d0d0d",
       "textColor": "#ffffff",
-      "title": "NOCTAEL\nSTUDIO",
-      "imageSrc": "assets/projects/assets/noctael/logoreal.jpg"
+      "title": "NOCTAEL",
+      "imageSrc": "assets/projects/assets/noctael/tthumbnail.png"
     },
     "narrative": {
       "subheading": "From Concept to Launch",
@@ -315,8 +315,9 @@ export const PROJECTS_CONFIG = {
         ]
       }
     ],
-    "pinBaseImage": "assets/projects/assets/noctael/mockup.jpg",
-    "nextProjectId": "vagdor"
+    "pinBaseImage": "assets/projects/assets/noctael/tthumbnail.png",
+    "nextProjectId": "vagdor",
+    "isLive": true
   },
   "vagdor": {
     "id": "vagdor",
@@ -732,7 +733,7 @@ export const PROJECTS_CONFIG = {
     ],
     "pinBaseImage": "assets/projects/assets/asiancooks/lastassetasianfoods.mp4",
     "pinBaseVideo": "assets/projects/assets/asiancooks/lastassetasianfoods.mp4",
-    "nextProjectId": "becht"
+    "nextProjectId": "noctael"
   }
 };
 

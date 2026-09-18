@@ -91,7 +91,8 @@ export function getProjectsList() {{
     categories: p.categories || [],
     image: p.thumbnail,
     description: p.summary,
-    link: (p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${{p.id}}` : null
+    isLive: Boolean(p.isLive || p.id === 'becht' || p.id === 'asiancooks'),
+    link: (p.isLive || p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${{p.id}}` : null
   }}));
 }}
 
@@ -126,6 +127,7 @@ export function getProjectsDetailData() {{
 
     projects_list = []
     for key, p in config_dict.items():
+        is_live = bool(p.get("isLive") or p.get("id") in ["becht", "asiancooks"])
         projects_list.append({
             "id": p.get("id", key),
             "number": p.get("number", "01"),
@@ -136,7 +138,8 @@ export function getProjectsDetailData() {{
             "subtitle": p.get("subtitle", ""),
             "image": p.get("thumbnail", ""),
             "description": p.get("summary", ""),
-            "link": f"project-detail.html?id={p.get('id', key)}" if (p.get("id") in ["becht", "asiancooks"] or p.get("isLive")) else None
+            "isLive": is_live,
+            "link": f"project-detail.html?id={p.get('id', key)}" if is_live else None
         })
 
     data_json = json.dumps(projects_list, indent=2, ensure_ascii=False)

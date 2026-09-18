@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let set = 0; set < repeatCount; set++) {
       filteredList.forEach((proj, realIdx) => {
         const thisCardIndex = cardGlobalIndex;
-        const isAvailable = proj.id === 'becht' || proj.id === 'asiancooks';
+        const isAvailable = Boolean(proj.link || proj.isLive || proj.id === 'becht' || proj.id === 'asiancooks');
         const card = document.createElement(isAvailable ? 'a' : 'div');
         card.className = `project-card ${isAvailable ? '' : 'is-unavailable'}`.trim();
         if (isAvailable) {
