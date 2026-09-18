@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuiltByJimi — Portfolio CMS & Asset Studio</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- ====================================================================
+         SIDEBAR: Projects Explorer
+         ==================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge">
+          <div class="brand-logo-circle">
+            <img src="favicon.png" alt="BuiltByJimi Logo">
+          </div>
+          <div class="brand-title">
+            BuiltByJimi <span class="tag">Studio CMS</span>
+          </div>
+        </div>
+        <div class="sidebar-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="projectSearchInput" placeholder="Filter projects...">
+        </div>
+      </div>
+
+      <!-- Projects Nav List -->
+      <div class="sidebar-projects-list" id="sidebarProjectsList">
+        <!-- Injected dynamically via js/dashboard.js -->
+      </div>
+
+      <div class="sidebar-footer">
+        <div style="display: flex; align-items: center;">
+          <span class="status-dot"></span>
+          <span id="serverStatusText">Local Server Online</span>
+        </div>
+        <span>v1.0.0</span>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         MAIN WORKSPACE
+         ==================================================================== -->
+    <main class="main-workspace">
+      
+      <!-- Topbar Header -->
+      <header class="workspace-topbar">
+        <div class="topbar-left">
+          <h1 class="current-project-title" id="topbarProjectTitle">Loading Project...</h1>
+          <span class="nav-item-badge badge-live" id="topbarLiveBadge">LIVE DETAIL</span>
+          
+          <div class="topbar-tabs">
+            <button class="tab-btn active" data-tab="paneBlocks">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              Visual Blocks
+            </button>
+            <button class="tab-btn" data-tab="paneHero">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+              Hero & Display
+            </button>
+            <button class="tab-btn" data-tab="paneNarrative">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="17" y1="18" x2="3" y2="18"></line>
+              </svg>
+              Narrative & Info
+            </button>
+            <button class="tab-btn" data-tab="paneMedia">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              Media Library
+            </button>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" id="toggleLiveDetail" style="accent-color: var(--accent-lime); cursor: pointer;">
+            Active Detail Page
+          </label>
+          
+          <a href="#" target="_blank" class="btn btn-secondary" id="btnPreviewProject">
+            Preview Project
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+
+          <button class="btn btn-secondary btn-icon-only" id="btnExportConfig" title="Export Configuration JSON">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+
+          <button class="btn btn-primary" id="btnSaveProject">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Changes <span class="kbd-shortcut">Ctrl+S</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Workspace Body (Scrollable) -->
+      <div class="workspace-content">
+
+        <!-- ================================================================
+             TAB 1: VISUAL BLOCKS STREAM
+             ================================================================ -->
+        <div class="tab-pane active" id="paneBlocks">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                  </svg>
+                  Project Visual Stream
+                </h2>
+                <p class="dash-card-desc">Organize 1-column full-width and 2-column side-by-side showcase blocks. Reorder with Up/Down buttons, swap columns, or replace media.</p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" id="btnAddBlockSingle">
+                  + Add 1-Col Block
+                </button>
+                <button class="btn btn-secondary" id="btnAddBlockDouble">
+                  + Add 2-Col Pair
+                </button>
+              </div>
+            </div>
+
+            <!-- Block Cards Container -->
+            <div class="blocks-stream-list" id="blocksStreamList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             TAB 2: HERO & PRESENTATION
+             ================================================================ -->
+        <div class="tab-pane" id="paneHero">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                  Hero Section Setup
+                </h2>
+                <p class="dash-card-desc">Configure the hero backdrop color, thumbnail graphic, and typography title displayed on the detail page.</p>
+              </div>
+            </div>
+
+            <div class="hero-editor-container">
+              <!-- Left: Controls -->
+              <div>
+                <div class="form-group">
+                  <label class="form-label">Hero Title (Display Typography)</label>
+                  <input type="text" class="form-input" id="heroTitleInput" placeholder="e.g. ALFRED\nBECHT">
+                  <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">Use \n for line breaks in the oversized title.</small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Hero Background Color</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="heroBgColorPicker" value="#212121">
+                    <input type="text" class="form-input" id="heroBgColorText" value="#212121" style="max-width: 120px; font-family: var(--font-mono);">
+                    <div class="color-presets">
+                      <button class="color-preset-btn" style="background: #212121;" data-color="#212121" title="Dark Graphite"></button>
+                      <button class="color-preset-btn" style="background: #300305;" data-color="#300305" title="Deep Wine / Asian Cooks"></button>
+                      <button class="color-preset-btn" style="background: #111111;" data-color="#111111" title="Obsidian"></button>
+                      <button class="color-preset-btn" style="background: #0a192f;" data-color="#0a192f" title="Midnight Navy"></button>
+                      <button class="color-preset-btn" style="background: #1e293b;" data-color="#1e293b" title="Slate Blue"></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Hero Image / Thumbnail Asset</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" class="form-input" id="heroImageSrcInput" readonly placeholder="assets/projects/assets/...">
+                    <button class="btn btn-secondary" id="btnPickHeroImage">Select Asset</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Live Preview Box -->
+              <div>
+                <label class="form-label" style="margin-bottom: 8px; display: block;">Live Hero Preview</label>
+                <div class="hero-preview-box" id="heroLivePreviewBox" style="background-color: #212121;">
+                  <div class="hero-bg-overlay" id="heroLivePreviewOverlay"></div>
+                  <div class="hero-title-mockup" id="heroLivePreviewTitle">ALFRED<br>BECHT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pinned Transition & Next Project Drawer -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 16 16 12 12 8"></polyline>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                  Next Project Transition & Drawer
+                </h2>
+                <p class="dash-card-desc">Define the pinned base background image/video and the target next case study.</p>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Pinned Base Container Asset (Last Block)</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" class="form-input" id="pinBaseImageInput" readonly placeholder="assets/projects/assets/...">
+                  <button class="btn btn-secondary" id="btnPickPinImage">Select Asset</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Next Project Target</label>
+                <select class="form-select" id="nextProjectIdSelect">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             TAB 3: NARRATIVE & METADATA
+             ================================================================ -->
+        <div class="tab-pane" id="paneNarrative">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">Project Identity & Meta</h2>
+                <p class="dash-card-desc">Basic information, category tags, and carousel summary.</p>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Project Title</label>
+                <input type="text" class="form-input" id="projectTitleInput">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Subtitle / Tagline</label>
+                <input type="text" class="form-input" id="projectSubtitleInput">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Industry</label>
+                <input type="text" class="form-input" id="projectIndustryInput">
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Year</label>
+                <input type="text" class="form-input" id="projectYearInput">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Number (# index)</label>
+                <input type="text" class="form-input" id="projectNumberInput">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Categories</label>
+                <div style="display: flex; gap: 14px; align-items: center; height: 38px;">
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                    <input type="checkbox" id="catBranding" style="accent-color: var(--accent-lime);"> Branding
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                    <input type="checkbox" id="catDigital" style="accent-color: var(--accent-lime);"> Digital Design
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Card Summary (Carousel & Search)</label>
+              <textarea class="form-textarea" id="projectSummaryInput" rows="2"></textarea>
+            </div>
+          </div>
+
+          <!-- Services Delivered -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">Services Delivered</h2>
+                <p class="dash-card-desc">Tags displayed in the detail narrative sidebar and cards.</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="tags-manager" id="servicesTagsContainer">
+                <!-- Tag pills injected dynamically -->
+                <input type="text" class="tag-add-input" id="newServiceInput" placeholder="+ Type service and hit Enter...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Narrative Story -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">Case Study Narrative</h2>
+                <p class="dash-card-desc">The storytelling section on the project detail page.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Narrative Subheading</label>
+              <input type="text" class="form-input" id="narrativeSubheadingInput">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Story Paragraphs (Separated by empty line)</label>
+              <textarea class="form-textarea" id="narrativeParagraphsInput" style="min-height: 180px;"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             TAB 4: MEDIA LIBRARY
+             ================================================================ -->
+        <div class="tab-pane" id="paneMedia">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h2 class="dash-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  Project Media Library
+                </h2>
+                <p class="dash-card-desc">Upload assets directly into the project folder. Click any asset to use it in your visual stream or hero.</p>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);" id="mediaCountText">
+                0 Assets
+              </div>
+            </div>
+
+            <!-- Upload Dropzone -->
+            <div class="dropzone-container" id="mediaDropzone">
+              <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <div class="dropzone-title">Drop images or videos here to upload</div>
+              <div class="dropzone-hint">PNG, JPG, WebP, SVG, MP4 supported • Auto-saved to project directory</div>
+              <input type="file" id="dropzoneFileInput" multiple style="display: none;" accept="image/*,video/*">
+            </div>
+
+            <!-- Media Grid -->
+            <div class="media-grid" id="mediaLibraryGrid">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ======================================================================
+       MODAL: Asset Picker
+       ====================================================================== -->
+  <div class="modal-overlay" id="assetPickerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="assetPickerModalTitle">Select Media Asset</h3>
+        <button class="modal-close-btn" id="btnModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <input type="text" class="form-input" id="modalAssetSearch" placeholder="Search project files..." style="max-width: 320px;">
+          <button class="btn btn-secondary" id="btnModalUploadTrigger">
+            + Upload New File
+          </button>
+          <input type="file" id="modalFileInput" style="display: none;" accept="image/*,video/*">
+        </div>
+        <div class="media-grid" id="modalMediaGrid">
+          <!-- Assets listed for picking -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client-Side Dashboard Script -->
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
