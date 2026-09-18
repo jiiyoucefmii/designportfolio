@@ -272,16 +272,44 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
 def run_server():
     server_address = ('', PORT)
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(server_address, DashboardRequestHandler) as httpd:
-        print("==================================================")
-        print(" BuiltByJimi Portfolio & CMS Dashboard Server")
-        print(f" - Portfolio:  http://localhost:{PORT}")
-        print(f" - Dashboard:  http://localhost:{PORT}/dashboard.html")
-        print("==================================================")
+
+    import webbrowser
+    import threading
+    import time
+
+    def launch_browser():
+        time.sleep(0.6)
+        try:
+            webbrowser.open(f"http://localhost:{PORT}/dashboard.html")
+        except Exception:
+            pass
+
+    try:
+        httpd = socketserver.TCPServer(server_address, DashboardRequestHandler)
+    except OSError:
+        print("==================================================", flush=True)
+        print(" BuiltByJimi Portfolio & CMS Dashboard Server", flush=True)
+        print(f" [Notice] Server is ALREADY running on port {PORT}!", flush=True)
+        print(f" Opening dashboard: http://localhost:{PORT}/dashboard.html", flush=True)
+        print("==================================================", flush=True)
+        webbrowser.open(f"http://localhost:{PORT}/dashboard.html")
+        return
+
+    with httpd:
+        print("==================================================", flush=True)
+        print(" BuiltByJimi Portfolio & CMS Dashboard Server", flush=True)
+        print(f" - Portfolio:  http://localhost:{PORT}", flush=True)
+        print(f" - Dashboard:  http://localhost:{PORT}/dashboard.html", flush=True)
+        print(" Opening dashboard in your default browser...", flush=True)
+        print(" Press Ctrl+C to stop the server.", flush=True)
+        print("==================================================", flush=True)
+
+        threading.Thread(target=launch_browser, daemon=True).start()
+
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\nShutting down server.")
+            print("\nShutting down server.", flush=True)
             httpd.server_close()
 
 
