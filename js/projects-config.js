@@ -105,11 +105,10 @@ export const PROJECTS_CONFIG = {
       "POS MARKETING"
     ],
     hero: {
-      type: "brand_graphic",
-      bg: "#0a192f",
-      textColor: "#ffffff",
-      title: "ALFRED\nBECHT",
-      imageSrc: "assets/projects/assets/becht/bechtlogo.png"
+      type: "image",
+      bg: "#212121",
+      imageSrc: "assets/projects/assets/becht/THUMBnail.png",
+      title: "ALFRED\nBECHT"
     },
     narrative: {
       subheading: "Precision Design for a Specialized Market",
@@ -166,7 +165,7 @@ export const PROJECTS_CONFIG = {
         ]
       }
     ],
-    pinBaseImage: "assets/projects/assets/becht/1columnbecht1.png",
+    pinBaseImage: "assets/projects/assets/becht/THUMBnail.png",
     nextProjectId: "asiancooks"
   },
 
