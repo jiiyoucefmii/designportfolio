@@ -85,13 +85,9 @@ function renderHero(project) {
 
   let contentHtml = '';
 
-  if (hero.type === 'brand_graphic') {
-    const textColor = hero.textColor || '#A8CEF8';
-    const displayTitle = hero.title || project.title.toUpperCase();
+  if (hero.imageSrc) {
     contentHtml = `
-      <div class="hero-brand-graphic" style="color: ${textColor};">
-        <h1 class="hero-brand-title">${escapeHtml(displayTitle)}</h1>
-      </div>
+      <img class="hero-image-element" src="${hero.imageSrc}" alt="${escapeHtml(project.title)}">
     `;
   } else if (hero.type === 'video' && hero.videoSrc) {
     contentHtml = `
@@ -99,15 +95,12 @@ function renderHero(project) {
         <source src="${hero.videoSrc}" type="video/mp4">
       </video>
     `;
-  } else if (hero.imageSrc) {
-    contentHtml = `
-      <img class="hero-image-element" src="${hero.imageSrc}" alt="${escapeHtml(project.title)}">
-    `;
   } else {
-    // Default graphic
+    const textColor = hero.textColor || '#A8CEF8';
+    const displayTitle = hero.title || project.title.toUpperCase();
     contentHtml = `
-      <div class="hero-brand-graphic" style="color: #A8CEF8;">
-        <h1 class="hero-brand-title">${escapeHtml(project.title.toUpperCase())}</h1>
+      <div class="hero-brand-graphic" style="color: ${textColor};">
+        <h1 class="hero-brand-title">${escapeHtml(displayTitle)}</h1>
       </div>
     `;
   }

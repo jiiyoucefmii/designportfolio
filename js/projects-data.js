@@ -17,6 +17,7 @@ const PROJECTS_DATA = [
     "subtitle": "Precision Design for a Specialized Market",
     "image": "assets/projects/assets/becht/projectcardbecht.png",
     "description": "Visual identity, roll-up banners, point-of-sale branding, and official launch event invitations for BN DENTAL celebrating their appointment as the authorized distributor of Alfred Becht GmbH in Algeria.",
+    "isLive": true,
     "link": "project-detail.html?id=becht"
   },
   {
@@ -31,6 +32,7 @@ const PROJECTS_DATA = [
     "subtitle": "Reviving a Legacy Through Design",
     "image": "assets/projects/thumbnails/mitidja.png",
     "description": "Revitalizing a legacy Algerian charcuterie brand through a modernized visual identity, product catalogue, tri-fold brochures, flyers, and business stationery.",
+    "isLive": false,
     "link": null
   },
   {
@@ -44,8 +46,9 @@ const PROJECTS_DATA = [
     "industry": "STREETWEAR & APPAREL",
     "role": "CREATIVE DIRECTION | BRAND IDENTITY | APPAREL DESIGN",
     "subtitle": "From Concept to Launch",
-    "image": "assets/projects/thumbnails/noctael.jpg",
+    "image": "assets/projects/assets/noctael/tthumbnail.png",
     "description": "From initial naming to 3D drop visualization and cinematic reels, a nocturnal minimalist streetwear brand identity brought to life in digital and physical forms.",
+    "isLive": true,
     "link": "project-detail.html?id=noctael"
   },
   {
@@ -60,6 +63,7 @@ const PROJECTS_DATA = [
     "subtitle": "Exploring New Directions for a Classic Brand",
     "image": "assets/projects/thumbnails/vagdor.png",
     "description": "Developing packaging iterations and flavor extension systems for a classic Algerian chips brand, balancing brand continuity with modern shelf appeal.",
+    "isLive": false,
     "link": null
   },
   {
@@ -74,6 +78,7 @@ const PROJECTS_DATA = [
     "subtitle": "Urban Mobility & Vehicle Rental",
     "image": "assets/projects/thumbnails/carilly.png",
     "description": "A frictionless vehicle rental app eliminating physical counters through digital key handoffs, interactive maps, and transparent pricing.",
+    "isLive": false,
     "link": null
   },
   {
@@ -88,6 +93,7 @@ const PROJECTS_DATA = [
     "subtitle": "Scalable Component Architecture",
     "image": "assets/projects/thumbnails/designsystem.png",
     "description": "A multi-platform enterprise design system bridging Figma tokens and production components for consistent, accessible digital product development.",
+    "isLive": false,
     "link": null
   },
   {
@@ -102,6 +108,7 @@ const PROJECTS_DATA = [
     "subtitle": "Clinical Pharmacy Management",
     "image": "assets/projects/thumbnails/pharma.png",
     "description": "High-density dashboard interface for prescription verification, inventory supply chains, and clinical analytics in hospital and pharmacy environments.",
+    "isLive": false,
     "link": null
   },
   {
@@ -116,6 +123,7 @@ const PROJECTS_DATA = [
     "subtitle": "Courier Dispatch & Tracking Architecture",
     "image": "assets/projects/thumbnails/delivery.png",
     "description": "Urban courier dispatch and live telemetry tracking platform uniting fleet operators, couriers, and recipients.",
+    "isLive": false,
     "link": null
   },
   {
@@ -131,6 +139,7 @@ const PROJECTS_DATA = [
     "subtitle": "Authentic Indian Snacks Delivered",
     "image": "assets/projects/assets/asiancooks/projectcardqsiqncooks.png",
     "description": "Complete brand identity, vibrant spice packaging, mascot design, and a mobile-first e-commerce app for an authentic Indian snack delivery brand.",
+    "isLive": true,
     "link": "project-detail.html?id=asiancooks"
   }
 ];

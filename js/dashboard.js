@@ -62,6 +62,8 @@ class DashboardController {
     this.catBranding = document.getElementById('catBranding');
     this.catDigital = document.getElementById('catDigital');
     this.projectSummaryInput = document.getElementById('projectSummaryInput');
+    this.projectThumbnailInput = document.getElementById('projectThumbnailInput');
+    this.btnPickThumbnail = document.getElementById('btnPickThumbnail');
     this.servicesTagsContainer = document.getElementById('servicesTagsContainer');
     this.newServiceInput = document.getElementById('newServiceInput');
     this.narrativeSubheadingInput = document.getElementById('narrativeSubheadingInput');
@@ -146,12 +148,25 @@ class DashboardController {
       });
     });
 
+    this.btnPickThumbnail = document.getElementById('btnPickThumbnail');
+    if (this.btnPickThumbnail) {
+      this.btnPickThumbnail.addEventListener('click', () => {
+        this.openAssetPicker('Choose Card Thumbnail (Work Carousel & Grid)', (asset) => {
+          this.currentProject.thumbnail = asset.relPath;
+          if (this.projectThumbnailInput) this.projectThumbnailInput.value = asset.relPath;
+          this.showToast(`Set "${asset.name}" as Card Thumbnail`);
+        });
+      });
+    }
+
     this.btnPickHeroImage.addEventListener('click', () => {
       this.openAssetPicker('Choose Hero Image / Graphic', (asset) => {
         if (!this.currentProject.hero) this.currentProject.hero = {};
         this.currentProject.hero.imageSrc = asset.relPath;
+        this.currentProject.hero.type = 'image';
         this.heroImageSrcInput.value = asset.relPath;
         this.updateHeroPreview();
+        this.showToast(`Set "${asset.name}" as Hero Image`);
       });
     });
 
@@ -370,6 +385,9 @@ class DashboardController {
     this.catDigital.checked = cats.includes('digital-design');
 
     this.projectSummaryInput.value = this.currentProject.summary || '';
+    if (this.projectThumbnailInput) {
+      this.projectThumbnailInput.value = this.currentProject.thumbnail || '';
+    }
     this.renderServicesTags();
 
     if (this.currentProject.narrative) {
@@ -709,16 +727,24 @@ class DashboardController {
             <span>${asset.sizeFormatted || ''}</span>
           </div>
           <div class="media-actions">
-            <button class="media-btn btn-use-hero" title="Set as Hero Thumbnail">Hero</button>
+            <button class="media-btn btn-use-card" title="Set as Card Thumbnail">Card</button>
+            <button class="media-btn btn-use-hero" title="Set as Hero Banner">Hero</button>
             <button class="media-btn btn-add-stream" title="Add as 1-Col Block">+ Stream</button>
             <button class="media-btn btn-copy-path" title="Copy Relative Path">Copy</button>
           </div>
         </div>
       `;
 
+      card.querySelector('.btn-use-card').addEventListener('click', () => {
+        this.currentProject.thumbnail = asset.relPath;
+        if (this.projectThumbnailInput) this.projectThumbnailInput.value = asset.relPath;
+        this.showToast(`Set "${asset.name}" as Card Thumbnail`);
+      });
+
       card.querySelector('.btn-use-hero').addEventListener('click', () => {
         if (!this.currentProject.hero) this.currentProject.hero = {};
         this.currentProject.hero.imageSrc = asset.relPath;
+        this.currentProject.hero.type = 'image';
         this.heroImageSrcInput.value = asset.relPath;
         this.updateHeroPreview();
         this.showToast(`Set "${asset.name}" as Hero Image`);
@@ -841,9 +867,48 @@ class DashboardController {
   }
 
   /* --------------------------------------------------------------------------
-     SAVE & SYNC WORKFLOW
+     FORM SYNC & SAVE WORKFLOW
      -------------------------------------------------------------------------- */
+  syncFormToProject() {
+    if (!this.currentProject) return;
+
+    this.currentProject.title = this.projectTitleInput.value.trim();
+    this.currentProject.subtitle = this.projectSubtitleInput.value.trim();
+    this.currentProject.industry = this.projectIndustryInput.value.trim();
+    this.currentProject.year = this.projectYearInput.value.trim();
+    this.currentProject.number = this.projectNumberInput.value.trim();
+    if (this.projectThumbnailInput && this.projectThumbnailInput.value) {
+      this.currentProject.thumbnail = this.projectThumbnailInput.value.trim();
+    }
+    this.currentProject.summary = this.projectSummaryInput.value.trim();
+
+    this.syncCategoriesFromInputs();
+
+    if (!this.currentProject.hero) this.currentProject.hero = {};
+    this.currentProject.hero.title = this.heroTitleInput.value;
+    this.currentProject.hero.bg = this.heroBgColorText.value || this.heroBgColorPicker.value;
+    if (this.heroImageSrcInput.value) {
+      this.currentProject.hero.imageSrc = this.heroImageSrcInput.value;
+      this.currentProject.hero.type = 'image';
+    }
+
+    if (this.pinBaseImageInput.value) {
+      this.currentProject.pinBaseImage = this.pinBaseImageInput.value;
+    }
+    this.currentProject.nextProjectId = this.nextProjectIdSelect.value;
+
+    if (!this.currentProject.narrative) this.currentProject.narrative = {};
+    this.currentProject.narrative.subheading = this.narrativeSubheadingInput.value.trim();
+    this.currentProject.narrative.paragraphs = this.narrativeParagraphsInput.value
+      .split('\n\n')
+      .map(p => p.trim())
+      .filter(Boolean);
+
+    this.currentProject.isLive = this.toggleLiveDetail.checked;
+  }
+
   async saveChanges() {
+    this.syncFormToProject();
     this.btnSaveProject.style.opacity = '0.6';
     this.btnSaveProject.textContent = 'Saving...';
 
@@ -856,7 +921,9 @@ class DashboardController {
       });
 
       if (res.ok) {
-        this.showToast('All changes saved and synced to projects-config.js!');
+        this.showToast('All changes saved! Updating preview...');
+        this.btnPreviewProject.href = `project-detail.html?id=${this.currentId}&v=${Date.now()}`;
+        this.renderSidebar(this.projectSearchInput.value);
       } else {
         const data = await res.json();
         this.showToast(`Save failed: ${data.message}`, true);

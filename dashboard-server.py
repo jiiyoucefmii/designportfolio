@@ -10,6 +10,7 @@ Zero third-party dependencies — uses standard library only.
 
 import http.server
 import socketserver
+import socket
 import os
 import json
 import urllib.parse
@@ -46,9 +47,14 @@ def read_projects_config():
 
     js_obj = match.group(1).rstrip(';')
     try:
+        return json.loads(js_obj)
+    except Exception:
+        pass
+
+    try:
         import subprocess
         proc = subprocess.run(['node', '-e', f'console.log(JSON.stringify({js_obj}))'],
-                              capture_output=True, text=True, cwd=BASE_DIR)
+                              capture_output=True, text=True, cwd=BASE_DIR, timeout=2)
         if proc.returncode == 0:
             return json.loads(proc.stdout)
     except Exception:
@@ -163,18 +169,23 @@ class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        super().end_headers()
+
     def send_json(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(body)))
-        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(body)
 
     def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With')
         self.end_headers()
@@ -285,7 +296,20 @@ def run_server():
             pass
 
     server_class = http.server.ThreadingHTTPServer
+    server_class.allow_reuse_address = False
     DashboardRequestHandler.protocol_version = "HTTP/1.1"
+
+    # Check if server is already running on port
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(0.4)
+        if probe.connect_ex(('127.0.0.1', PORT)) == 0:
+            print("==================================================", flush=True)
+            print(" BuiltByJimi Portfolio & CMS Dashboard Server", flush=True)
+            print(f" [Notice] Server is ALREADY running on port {PORT}!", flush=True)
+            print(f" Opening dashboard: http://127.0.0.1:{PORT}/dashboard.html", flush=True)
+            print("==================================================", flush=True)
+            webbrowser.open(f"http://127.0.0.1:{PORT}/dashboard.html")
+            return
 
     try:
         httpd = server_class(('0.0.0.0', PORT), DashboardRequestHandler)

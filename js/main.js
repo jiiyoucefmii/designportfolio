@@ -310,15 +310,32 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!currentInner) return;
 
       if (isLive) {
+        let linkEl = currentInner;
         if (currentInner.tagName !== 'A') {
-          const a = document.createElement('a');
-          a.className = 'card-inner';
-          a.href = (proj && proj.link) || `project-detail.html?id=${id}`;
-          a.innerHTML = currentInner.innerHTML;
-          currentInner.replaceWith(a);
+          linkEl = document.createElement('a');
+          linkEl.className = 'card-inner';
+          linkEl.href = (proj && proj.link) || `project-detail.html?id=${id}`;
+          linkEl.innerHTML = currentInner.innerHTML;
+          currentInner.replaceWith(linkEl);
         } else {
-          currentInner.href = (proj && proj.link) || `project-detail.html?id=${id}`;
-          currentInner.classList.remove('is-non-clickable');
+          linkEl.href = (proj && proj.link) || `project-detail.html?id=${id}`;
+          linkEl.classList.remove('is-non-clickable');
+        }
+
+        // Live image & text sync
+        if (proj.image) {
+          const img = linkEl.querySelector('.card-image-wrap img');
+          if (img && img.getAttribute('src') !== proj.image) {
+            img.src = proj.image;
+          }
+        }
+        if (proj.title) {
+          const title = linkEl.querySelector('.card-title');
+          if (title) title.textContent = proj.title;
+        }
+        if (proj.subtitle || proj.industry) {
+          const sub = linkEl.querySelector('.card-subtitle');
+          if (sub) sub.textContent = proj.subtitle || proj.industry;
         }
       } else {
         if (currentInner.tagName === 'A') {

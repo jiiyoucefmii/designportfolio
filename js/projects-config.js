@@ -100,7 +100,8 @@ export const PROJECTS_CONFIG = {
       }
     ],
     "pinBaseImage": "assets/projects/assets/becht/THUMBnail.png",
-    "nextProjectId": "asiancooks"
+    "nextProjectId": "asiancooks",
+    "isLive": true
   },
   "mitidja": {
     "id": "mitidja",
@@ -201,7 +202,7 @@ export const PROJECTS_CONFIG = {
       "branding",
       "digital-design"
     ],
-    "thumbnail": "assets/projects/thumbnails/noctael.jpg",
+    "thumbnail": "assets/projects/assets/noctael/tthumbnail.png",
     "summary": "From initial naming to 3D drop visualization and cinematic reels, a nocturnal minimalist streetwear brand identity brought to life in digital and physical forms.",
     "services": [
       "CREATIVE DIRECTION",
@@ -211,7 +212,7 @@ export const PROJECTS_CONFIG = {
       "MOTION & CINEMATIC REELS"
     ],
     "hero": {
-      "type": "brand_graphic",
+      "type": "image",
       "bg": "#0d0d0d",
       "textColor": "#ffffff",
       "title": "NOCTAEL",
@@ -244,75 +245,21 @@ export const PROJECTS_CONFIG = {
         "items": [
           {
             "type": "image",
-            "src": "assets/projects/assets/noctael/mockup.jpg",
-            "alt": "Noctael First Drop Mockup 1"
-          },
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/mockup2.jpg",
-            "alt": "Noctael First Drop Mockup 2"
-          }
-        ]
-      },
-      {
-        "layout": "2-col",
-        "items": [
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/mockup3.jpg",
-            "alt": "Noctael First Drop Mockup 3"
-          },
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/mockup4.jpg",
-            "alt": "Noctael First Drop Mockup 4"
-          }
-        ]
-      },
-      {
-        "layout": "2-col",
-        "items": [
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (1).jpg",
-            "alt": "Noctael 3D Model 1"
-          },
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (2.).jpg",
-            "alt": "Noctael 3D Model 2"
-          }
-        ]
-      },
-      {
-        "layout": "2-col",
-        "items": [
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (3.).jpg",
+            "src": "assets/projects/assets/noctael/2cNoctael-1.png",
             "alt": "Noctael 3D Model 3"
           },
           {
             "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (4.).jpg",
+            "src": "assets/projects/assets/noctael/2cNoctael.png",
             "alt": "Noctael 3D Model 4"
           }
         ]
       },
       {
-        "layout": "2-col",
-        "items": [
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (5.).jpg",
-            "alt": "Noctael 3D Model 5"
-          },
-          {
-            "type": "image",
-            "src": "assets/projects/assets/noctael/tshirt (6.).jpg",
-            "alt": "Noctael 3D Model 6"
-          }
-        ]
+        "layout": "1-col",
+        "type": "video",
+        "src": "assets/projects/assets/noctael/Scene-1 (1) (1).mp4",
+        "alt": "Scene-1 (1) (1)"
       }
     ],
     "pinBaseImage": "assets/projects/assets/noctael/tthumbnail.png",
@@ -751,7 +698,8 @@ export function getProjectsList() {
     categories: p.categories || [],
     image: p.thumbnail,
     description: p.summary,
-    link: (p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${p.id}` : null
+    isLive: Boolean(p.isLive || p.id === 'becht' || p.id === 'asiancooks'),
+    link: (p.isLive || p.id === 'becht' || p.id === 'asiancooks' || p.link) ? `project-detail.html?id=${p.id}` : null
   }));
 }
 
