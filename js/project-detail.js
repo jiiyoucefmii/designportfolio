@@ -27,9 +27,6 @@ function initProjectDetail() {
     return;
   }
 
-  const project = PROJECTS_DETAIL_DATA[projectId];
-  if (!project) return;
-
   // 2. Set Page Title
   document.title = `${project.title} — BuiltByJimi`;
 
