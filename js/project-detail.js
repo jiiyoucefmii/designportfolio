@@ -323,7 +323,8 @@ function renderNextProject(project) {
 }
 
 /**
- * 5. GSAP ScrollTrigger: Pinned Horizontal Reveal / Side Drawer Transition (frameone -> framelast)
+ * 5. GSAP ScrollTrigger: Pinned Horizontal Reveal / Side Drawer Transition (Desktop only)
+ * On mobile screens (<= 768px), drawer is static with zero animation as shown in nextprojectframemobile.
  */
 function initNextProjectScrollPin() {
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -344,41 +345,46 @@ function initNextProjectScrollPin() {
     if (t.trigger === pinSection) t.kill();
   });
 
-  // Initial State (frameone.png):
-  // Ensure no conflicting matrix transforms exist, then translate 100% offscreen to right
-  gsap.set(drawerPanel, { clearProps: "transform" });
-  gsap.set(drawerPanel, { xPercent: 100 });
-  if (baseAsset) gsap.set(baseAsset, { opacity: 1 });
+  ScrollTrigger.matchMedia({
+    // Desktop: Smooth pinned horizontal side drawer reveal
+    "(min-width: 769px)": function() {
+      gsap.set(drawerPanel, { clearProps: "transform" });
+      gsap.set(drawerPanel, { xPercent: 100 });
+      if (baseAsset) gsap.set(baseAsset, { opacity: 1, display: 'block' });
 
-  // Timeline for scroll-driven horizontal slide pinned to scroll progress
-  const pinTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: pinSection,
-      start: "top top",
-      end: "+=220%", // Generous pin runway so horizontal reveal is easy to scrub
-      pin: true,
-      scrub: 0.5, // Responsive, buttery-smooth scrub tied directly to scroll
-      anticipatePin: 1,
-      invalidateOnRefresh: true
+      const pinTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: pinSection,
+          start: "top top",
+          end: "+=220%",
+          pin: true,
+          scrub: 0.5,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+
+      pinTimeline.fromTo(drawerPanel,
+        { xPercent: 100 },
+        { xPercent: 0, ease: "none" },
+        0
+      );
+
+      if (baseAsset) {
+        pinTimeline.fromTo(baseAsset,
+          { opacity: 1 },
+          { opacity: 0.7, ease: "none" },
+          0
+        );
+      }
+    },
+
+    // Mobile: Strictly static, no pinning, no translate
+    "(max-width: 768px)": function() {
+      gsap.set(drawerPanel, { clearProps: "all" });
+      if (baseAsset) gsap.set(baseAsset, { clearProps: "all" });
     }
   });
-
-  // Scrubbed Slide Phase:
-  // 1. Drawer translates from right edge (100%) inward across to 0% (revealing NEXT PROJECT and teaser card)
-  pinTimeline.fromTo(drawerPanel,
-    { xPercent: 100 },
-    { xPercent: 0, ease: "none" },
-    0
-  );
-
-  // 2. Base asset dims gently from 1 to 0.7 as seen in framethree and framelast
-  if (baseAsset) {
-    pinTimeline.fromTo(baseAsset,
-      { opacity: 1 },
-      { opacity: 0.7, ease: "none" },
-      0
-    );
-  }
 
   ScrollTrigger.refresh();
 }
