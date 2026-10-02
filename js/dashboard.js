@@ -31,6 +31,13 @@ class DashboardController {
     this.btnExportConfig = document.getElementById('btnExportConfig');
     this.serverStatusText = document.getElementById('serverStatusText');
 
+    // Admin Auth Elements
+    this.adminLoginModal = document.getElementById('adminLoginModal');
+    this.adminLoginForm = document.getElementById('adminLoginForm');
+    this.adminPasswordInput = document.getElementById('adminPasswordInput');
+    this.loginErrorMessage = document.getElementById('loginErrorMessage');
+    this.btnAdminLogout = document.getElementById('btnAdminLogout');
+
     // Tabs
     this.tabButtons = document.querySelectorAll('.tab-btn');
     this.tabPanes = document.querySelectorAll('.tab-pane');
@@ -340,16 +347,138 @@ class DashboardController {
     this.modalAssetSearch.addEventListener('input', (e) => {
       this.renderModalAssets(e.target.value);
     });
+
+    // Admin Login / Logout Handlers
+    if (this.adminLoginForm) {
+      this.adminLoginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pwd = this.adminPasswordInput ? this.adminPasswordInput.value : '';
+        this.handleAdminLogin(pwd);
+      });
+    }
+
+    if (this.btnAdminLogout) {
+      this.btnAdminLogout.addEventListener('click', () => {
+        this.logoutAdmin();
+      });
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // ADMIN AUTH & PROTECTED REQUESTS
+  // --------------------------------------------------------------------------
+  getAuthToken() {
+    return sessionStorage.getItem('builtbyjimi_admin_token') || '';
+  }
+
+  setAuthToken(token) {
+    if (token) {
+      sessionStorage.setItem('builtbyjimi_admin_token', token);
+      if (this.btnAdminLogout) this.btnAdminLogout.style.display = 'inline';
+    } else {
+      sessionStorage.removeItem('builtbyjimi_admin_token');
+      if (this.btnAdminLogout) this.btnAdminLogout.style.display = 'none';
+    }
+  }
+
+  showLoginModal() {
+    if (this.adminLoginModal) {
+      this.adminLoginModal.style.display = 'flex';
+      if (this.adminPasswordInput) {
+        this.adminPasswordInput.value = '';
+        this.adminPasswordInput.focus();
+      }
+      if (this.loginErrorMessage) {
+        this.loginErrorMessage.style.display = 'none';
+      }
+    }
+  }
+
+  hideLoginModal() {
+    if (this.adminLoginModal) {
+      this.adminLoginModal.style.display = 'none';
+    }
+  }
+
+  async handleAdminLogin(password) {
+    if (!password) return;
+    const submitBtn = document.getElementById('btnAdminLoginSubmit');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying...';
+    }
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'admin', password })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        this.setAuthToken(data.token);
+        this.hideLoginModal();
+        this.showToast('Admin Studio Unlocked!');
+        await this.loadInitialData();
+        await this.loadProjectAssets();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (this.loginErrorMessage) {
+          this.loginErrorMessage.textContent = err.detail || 'Incorrect admin password.';
+          this.loginErrorMessage.style.display = 'block';
+        }
+      }
+    } catch (e) {
+      if (this.loginErrorMessage) {
+        this.loginErrorMessage.textContent = 'Connection error: ' + e.message;
+        this.loginErrorMessage.style.display = 'block';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Unlock Studio';
+      }
+    }
+  }
+
+  logoutAdmin() {
+    this.setAuthToken(null);
+    this.showToast('Logged out of Admin Studio.');
+    this.showLoginModal();
+  }
+
+  async authFetch(url, options = {}) {
+    options.headers = options.headers || {};
+    const token = this.getAuthToken();
+    if (token) {
+      if (options.headers instanceof Headers) {
+        options.headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        options.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
+    const res = await fetch(url, options);
+    if (res.status === 401) {
+      this.showLoginModal();
+    }
+    return res;
   }
 
   async loadInitialData() {
+    // Check initial auth status if token exists
+    if (this.getAuthToken()) {
+      if (this.btnAdminLogout) this.btnAdminLogout.style.display = 'inline';
+    }
+
     try {
-      const res = await fetch('/api/projects');
+      const res = await this.authFetch('/api/projects');
       if (res.ok) {
         const data = await res.json();
         if (data && data.projects && Object.keys(data.projects).length > 0) {
           this.projects = data.projects;
-          this.serverStatusText.textContent = 'Server Connected (Port 3000)';
+          this.serverStatusText.textContent = data.source === 'r2' ? 'Cloudflare R2 Live' : 'Server Online';
         }
       }
     } catch (e) {
@@ -696,7 +825,7 @@ class DashboardController {
     `;
 
     try {
-      const res = await fetch(`/api/assets?project=${this.currentId}`);
+      const res = await this.authFetch(`/api/assets?project=${this.currentId}`);
       if (res.ok) {
         const data = await res.json();
         this.currentAssets = data.files || [];
@@ -823,21 +952,25 @@ class DashboardController {
   async uploadSingleFile(file) {
     try {
       const url = `/api/upload?project=${this.currentId}&filename=${encodeURIComponent(file.name)}`;
-      const res = await fetch(url, {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await this.authFetch(url, {
         method: 'POST',
-        body: file
+        body: formData
       });
       if (res.ok) {
         const data = await res.json();
         return {
           name: data.name,
           relPath: data.relPath,
+          url: data.url,
           isVideo: file.type.startsWith('video/'),
           isImage: file.type.startsWith('image/')
         };
       } else {
-        const err = await res.json();
-        this.showToast(`Upload failed: ${err.message || 'Server error'}`, true);
+        const err = await res.json().catch(() => ({}));
+        this.showToast(`Upload failed: ${err.detail || err.message || 'Server error'}`, true);
       }
     } catch (e) {
       this.showToast(`Upload error: ${e.message}`, true);
@@ -960,7 +1093,7 @@ class DashboardController {
 
     try {
       const payload = { projects: this.projects };
-      const res = await fetch('/api/save', {
+      const res = await this.authFetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -3,6 +3,11 @@ __pycache__/
 *.pyc
 .agents/
 scripts/
+.env
+*.env
+.venv/
+env/
+
 
 # Figma raw data dumps
 figma_clean_full.json

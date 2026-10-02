@@ -725,6 +725,51 @@ export const PROJECTS_CONFIG = {
 };
 
 /**
+ * Cloudflare R2 CDN Public Delivery Base URL
+ */
+export const CDN_BASE_URL = 'https://pub-761f8e7d73a6435984ad9fe6f232e725.r2.dev';
+
+export function resolveAssetUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//') || url.startsWith('data:')) {
+    return url;
+  }
+  const clean = url.startsWith('/') ? url.slice(1) : url;
+  return `${CDN_BASE_URL}/${clean}`;
+}
+
+function deepResolveProjectAssets(project) {
+  if (!project) return project;
+  const p = { ...project };
+
+  if (p.thumbnail) p.thumbnail = resolveAssetUrl(p.thumbnail);
+  if (p.pinBaseImage) p.pinBaseImage = resolveAssetUrl(p.pinBaseImage);
+  if (p.pinBaseVideo) p.pinBaseVideo = resolveAssetUrl(p.pinBaseVideo);
+
+  if (p.hero) {
+    p.hero = { ...p.hero };
+    if (p.hero.imageSrc) p.hero.imageSrc = resolveAssetUrl(p.hero.imageSrc);
+  }
+
+  if (Array.isArray(p.blocks)) {
+    p.blocks = p.blocks.map(block => {
+      const b = { ...block };
+      if (b.src) b.src = resolveAssetUrl(b.src);
+      if (Array.isArray(b.items)) {
+        b.items = b.items.map(it => {
+          const item = { ...it };
+          if (item.src) item.src = resolveAssetUrl(item.src);
+          return item;
+        });
+      }
+      return b;
+    });
+  }
+
+  return p;
+}
+
+/**
  * Helper: Export as Array for cards, carousels, and lists
  */
 export function getProjectsList() {
@@ -736,7 +781,7 @@ export function getProjectsList() {
     industry: p.industry,
     role: p.services ? p.services.slice(0, 3).join(' | ') : '',
     categories: p.categories || [],
-    image: p.thumbnail,
+    image: resolveAssetUrl(p.thumbnail),
     isLive: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')),
     link: Boolean(p.isLive !== undefined ? p.isLive : (p.id === 'becht' || p.id === 'asiancooks')) ? `/${p.id}` : null
   }));
@@ -749,7 +794,8 @@ export function getProjectsDetailData() {
   const result = {};
   const entries = Object.entries(PROJECTS_CONFIG);
 
-  entries.forEach(([key, project], idx) => {
+  entries.forEach(([key, rawProject], idx) => {
+    const project = deepResolveProjectAssets(rawProject);
     const nextKey = project.nextProjectId || (idx + 1 < entries.length ? entries[idx + 1][0] : entries[0][0]);
     const nextProjectObj = PROJECTS_CONFIG[nextKey] || entries[0][1];
 
@@ -759,10 +805,11 @@ export function getProjectsDetailData() {
         id: nextProjectObj.id,
         title: nextProjectObj.title,
         subtitle: nextProjectObj.subtitle,
-        cardImage: nextProjectObj.thumbnail
+        cardImage: resolveAssetUrl(nextProjectObj.thumbnail)
       }
     };
   });
 
   return result;
 }
+

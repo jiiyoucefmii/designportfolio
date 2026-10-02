@@ -21,7 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalDesc = document.getElementById('modalDesc');
   const modalLink = document.getElementById('modalLink');
 
-  let allProjectsList = (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA)) ? [...PROJECTS_DATA] : [];
+  const R2_PUBLIC_URL = 'https://pub-761f8e7d73a6435984ad9fe6f232e725.r2.dev';
+  function resolveR2Url(url) {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//') || url.startsWith('data:')) {
+      return url;
+    }
+    const clean = url.startsWith('/') ? url.slice(1) : url;
+    return `${R2_PUBLIC_URL}/${clean}`;
+  }
+
+  let allProjectsList = (typeof PROJECTS_DATA !== 'undefined' && Array.isArray(PROJECTS_DATA)) 
+    ? PROJECTS_DATA.map(p => ({ ...p, image: resolveR2Url(p.image) })) 
+    : [];
   let activeFilter = null; // null = all projects
   let filteredList = [...allProjectsList];
 

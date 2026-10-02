@@ -2,10 +2,45 @@ import { PROJECTS_DETAIL_DATA } from './project-detail-data.js';
 
 let currentProjectsData = { ...PROJECTS_DETAIL_DATA };
 
+const R2_PUBLIC_URL = 'https://pub-761f8e7d73a6435984ad9fe6f232e725.r2.dev';
+
+function resolveR2Url(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//') || url.startsWith('data:')) {
+    return url;
+  }
+  const clean = url.startsWith('/') ? url.slice(1) : url;
+  return `${R2_PUBLIC_URL}/${clean}`;
+}
+
+function deepResolveProject(project) {
+  if (!project) return project;
+  const p = { ...project };
+  if (p.thumbnail) p.thumbnail = resolveR2Url(p.thumbnail);
+  if (p.pinBaseImage) p.pinBaseImage = resolveR2Url(p.pinBaseImage);
+  if (p.pinBaseVideo) p.pinBaseVideo = resolveR2Url(p.pinBaseVideo);
+  if (p.hero) {
+    p.hero = { ...p.hero };
+    if (p.hero.imageSrc) p.hero.imageSrc = resolveR2Url(p.hero.imageSrc);
+  }
+  if (Array.isArray(p.blocks)) {
+    p.blocks = p.blocks.map(b => {
+      const block = { ...b };
+      if (block.src) block.src = resolveR2Url(block.src);
+      if (Array.isArray(block.items)) {
+        block.items = block.items.map(it => ({ ...it, src: resolveR2Url(it.src) }));
+      }
+      return block;
+    });
+  }
+  return p;
+}
+
 function buildDetailDataFromConfig(configDict) {
   const result = {};
   const entries = Object.entries(configDict);
-  entries.forEach(([key, project], idx) => {
+  entries.forEach(([key, rawProject], idx) => {
+    const project = deepResolveProject(rawProject);
     const nextKey = project.nextProjectId || (idx + 1 < entries.length ? entries[idx + 1][0] : entries[0][0]);
     const nextProjectObj = configDict[nextKey] || entries[0][1];
     result[key] = {
@@ -14,12 +49,13 @@ function buildDetailDataFromConfig(configDict) {
         id: nextProjectObj.id,
         title: nextProjectObj.title,
         subtitle: nextProjectObj.subtitle,
-        cardImage: nextProjectObj.thumbnail
+        cardImage: resolveR2Url(nextProjectObj.thumbnail)
       }
     };
   });
   return result;
 }
+
 
 function resolveProjectId() {
   // 1. Check URL query param: ?id=becht
